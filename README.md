@@ -122,8 +122,8 @@ sudo apt-get install -y spotify-client
 ### Clone repository and link scripts
 ```bash
 git clone git@git.voss.rocks:toniebox/spotify-download-service.git
-sudo ln -s $PWD/spotify-toniebox-sync/sp /usr/local/bin
-sudo ln -s $PWD/spotify-toniebox-sync/stream_recorder.pl /usr/local/bin/
+ln -sf $PWD/spotify-toniebox-sync/bin/sp /usr/local/bin
+ln -sf $PWD/spotify-toniebox-sync/bin/stream_recorder.pl /usr/local/bin/
 ```
 
 ### Verfication
