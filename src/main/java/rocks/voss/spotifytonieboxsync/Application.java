@@ -205,8 +205,10 @@ public class Application {
 
     private static Properties getProperties(String propertiesFile) throws IOException {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        InputStream stream = new FileInputStream("./" + propertiesFile);
-        if (stream == null) {
+        InputStream stream;
+        if (new File("./" + propertiesFile).exists()) {
+            stream = new FileInputStream("./" + propertiesFile);
+        } else {
             stream = loader.getResourceAsStream(propertiesFile);
         }
         Properties properties = new Properties();
