@@ -168,7 +168,7 @@ sub StartSpotify {
 	chomp($wc);
 	if ($wc == 0) {
 		print "Starting Spotify\n";
-		system("spotify $SPOTIFY_OPTIONS>/dev/null 2>&1&");
+		system("spotify \$SPOTIFY_OPTIONS>/dev/null 2>&1&");
 		print "  ... waiting for spotify to start\n";
 		sleep 5;
 	}
