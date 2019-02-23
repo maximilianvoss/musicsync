@@ -18,7 +18,7 @@ public class SpotifyRecordingHandler {
 
         if (files.length == 0) {
             log.debug("File does not exist: " + filename);
-            System.out.println(track.getTrack().getUri());
+            log.info("Downloading: " + track.getTrack().getUri());
             Runtime rt = Runtime.getRuntime();
             StringBuilder command = new StringBuilder();
             command.append("stream_recorder.pl --uri '")
