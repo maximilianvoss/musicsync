@@ -100,6 +100,8 @@ public class PlaylistUtils {
 
     private static boolean isDurationValid(TonieChapterBean chapter, PlaylistTrack track) {
         float delta = chapter.getLength() * 1000 - track.getTrack().getDurationMs();
+        log.debug("Chapter length: " + chapter.getLength() * 1000);
+        log.debug("Track length: " + track.getTrack().getDurationMs());
         if (delta > 2000 || delta < -2000) {
             log.debug("duration is over 2s apart");
             return false;
