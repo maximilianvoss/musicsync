@@ -84,7 +84,7 @@ public class Application {
                 for (Pair<Tonie, PlaylistSimplified> pair : mappings) {
                     sync(spotifyHandler, tonieHandler, pair.getRight(), pair.getLeft());
                 }
-                Thread.sleep(5000);
+                Thread.sleep(60000);
             }
 
         } else {
