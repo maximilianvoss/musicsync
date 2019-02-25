@@ -346,9 +346,9 @@ sub WaitAndBleed {
 
 	# Playlist ended : kill children.
 	# stop recorder.
-	kill 9, -$rpid;
+	kill 9, $rpid;
 	# stop timer
-	kill 9, -$tpid;
+	kill 9, $tpid;
 }
 
 sub CleanUp {
