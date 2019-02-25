@@ -61,8 +61,10 @@ public class PlaylistUtils {
         for (PlaylistTrack track : tracks) {
             log.debug("Track: " + track.getTrack().getId());
             TonieChapterBean chapter = findChapterByTrack(chapters, track);
-            log.debug("Chapter added: " + chapter.getTitle());
-            sorted.add(chapter);
+            if ( chapter != null ) {
+                log.debug("Chapter added: " + chapter.getTitle());
+                sorted.add(chapter);
+            }
         }
         return sorted.toArray(new TonieChapterBean[]{});
     }
