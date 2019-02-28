@@ -56,10 +56,10 @@ public class Application {
             }
         }
 
-        SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
         TonieHandler tonieHandler = new TonieHandler(tonieboxProperties.getProperty("username"), tonieboxProperties.getProperty("password"));
 
         if (isDaemon) {
+            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
             List<Pair<Tonie, PlaylistSimplified>> mappings = new ArrayList<>();
             int i = 0;
             String mapping;
@@ -88,7 +88,6 @@ public class Application {
                 Thread.sleep(60000);
                 log.debug("Up again");
             }
-
         } else {
             if (StringUtils.isBlank(tonieName) || StringUtils.isBlank(playlistName)) {
                 log.error("tonieName or playlistName is empty");
@@ -96,6 +95,7 @@ public class Application {
                 return;
             }
 
+            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
             Tonie tonie = getTonieByName(tonieHandler, tonieName);
             PlaylistSimplified playlist = getPlaylistByName(spotifyHandler, playlistName);
 
