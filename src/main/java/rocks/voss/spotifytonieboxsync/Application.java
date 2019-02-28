@@ -21,90 +21,97 @@ import java.util.Properties;
 public class Application {
     private static Logger log = Logger.getLogger(Application.class.getName());
 
-    public static void main(String[] args) throws IOException, SpotifyWebApiException, InterruptedException {
-        Properties spotifyProperties = getProperties("spotify.properties");
-        Properties tonieboxProperties = getProperties("toniebox.properties");
-        Properties spotifytonieboxsyncProperties = getProperties("spotifytonieboxsync.properties");
-        SpotifyHandler spotifyHandler = SpotifyHandler.createHandlerByProperties(spotifyProperties);
+    public static void main(String[] args) {
+        try {
+            Properties spotifyProperties = getProperties("spotify.properties");
+            Properties tonieboxProperties = getProperties("toniebox.properties");
+            Properties spotifytonieboxsyncProperties = getProperties("spotifytonieboxsync.properties");
+            SpotifyHandler spotifyHandler = SpotifyHandler.createHandlerByProperties(spotifyProperties);
 
-        String playlistName = null;
-        String tonieName = null;
-        boolean isDaemon = false;
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (StringUtils.equals(arg, "--apicode") && args.length == 1) {
-                log.trace("--apicode");
-                SpotifyAuthenticationSetup.getSignInUrl(spotifyHandler);
-                return;
-            } else if (StringUtils.equals(arg, "--code") && args.length == 2) {
-                String code = args[++i];
-                log.trace("--code: " + code);
-                SpotifyAuthenticationSetup.getAccessToken(spotifyHandler, code);
-                return;
-            } else if (StringUtils.equals(arg, "--playlist") && args.length == 4) {
-                playlistName = args[++i];
-                log.trace("--playlist: " + playlistName);
-            } else if (StringUtils.equals(arg, "--tonie") && args.length == 4) {
-                tonieName = args[++i];
-                log.trace("--tonie: " + tonieName);
-            } else if (StringUtils.equals(arg, "--daemon") && args.length == 1) {
-                isDaemon = true;
-            } else {
-                log.error("command not supported: " + arg);
-                System.out.println("Not supported!");
-                return;
+            String playlistName = null;
+            String tonieName = null;
+            boolean isDaemon = false;
+            for (int i = 0; i < args.length; i++) {
+                String arg = args[i];
+                if (StringUtils.equals(arg, "--apicode") && args.length == 1) {
+                    log.trace("--apicode");
+                    SpotifyAuthenticationSetup.getSignInUrl(spotifyHandler);
+                    return;
+                } else if (StringUtils.equals(arg, "--code") && args.length == 2) {
+                    String code = args[++i];
+                    log.trace("--code: " + code);
+                    SpotifyAuthenticationSetup.getAccessToken(spotifyHandler, code);
+                    return;
+                } else if (StringUtils.equals(arg, "--playlist") && args.length == 4) {
+                    playlistName = args[++i];
+                    log.trace("--playlist: " + playlistName);
+                } else if (StringUtils.equals(arg, "--tonie") && args.length == 4) {
+                    tonieName = args[++i];
+                    log.trace("--tonie: " + tonieName);
+                } else if (StringUtils.equals(arg, "--daemon") && args.length == 1) {
+                    isDaemon = true;
+                } else {
+                    log.error("command not supported: " + arg);
+                    System.out.println("Not supported!");
+                    return;
+                }
             }
-        }
 
-        TonieHandler tonieHandler = new TonieHandler(tonieboxProperties.getProperty("username"), tonieboxProperties.getProperty("password"));
-
-        if (isDaemon) {
-            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
-            List<Pair<Tonie, PlaylistSimplified>> mappings = new ArrayList<>();
-            int i = 0;
-            String mapping;
-            do {
-                mapping = spotifytonieboxsyncProperties.getProperty("mapping[" + i + "]");
-                log.debug("Mapping from file: " + mapping);
-                if (mapping != null) {
-                    String[] pairs = mapping.split(";");
-                    Tonie tonie = getTonieById(tonieHandler, pairs[0]);
-                    PlaylistSimplified playlist = getPlaylistByUri(spotifyHandler, pairs[1]);
-                    if (tonie != null && playlist != null) {
-                        log.trace("Added Tuple");
-                        mappings.add(Pair.of(tonie, playlist));
-                    } else {
-                        log.error("Tonie or Playlist not found");
+            TonieHandler tonieHandler = new TonieHandler(tonieboxProperties.getProperty("username"), tonieboxProperties.getProperty("password"));
+            if (isDaemon) {
+                SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
+                List<Pair<Tonie, PlaylistSimplified>> mappings = new ArrayList<>();
+                int i = 0;
+                String mapping;
+                do {
+                    mapping = spotifytonieboxsyncProperties.getProperty("mapping[" + i + "]");
+                    log.debug("Mapping from file: " + mapping);
+                    if (mapping != null) {
+                        String[] pairs = mapping.split(";");
+                        Tonie tonie = getTonieById(tonieHandler, pairs[0]);
+                        PlaylistSimplified playlist = getPlaylistByUri(spotifyHandler, pairs[1]);
+                        if (tonie != null && playlist != null) {
+                            log.trace("Added Tuple");
+                            mappings.add(Pair.of(tonie, playlist));
+                        } else {
+                            log.error("Tonie or Playlist not found");
+                        }
                     }
+                    i++;
+                } while (mapping != null);
+
+                while (true) {
+                    for (Pair<Tonie, PlaylistSimplified> pair : mappings) {
+                        sync(spotifyHandler, tonieHandler, pair.getRight(), pair.getLeft());
+                    }
+                    log.debug("Taking a nap");
+                    Thread.sleep(60000);
+                    log.debug("Up again");
                 }
-                i++;
-            } while (mapping != null);
-
-            while (true) {
-                for (Pair<Tonie, PlaylistSimplified> pair : mappings) {
-                    sync(spotifyHandler, tonieHandler, pair.getRight(), pair.getLeft());
+            } else {
+                if (StringUtils.isBlank(tonieName) || StringUtils.isBlank(playlistName)) {
+                    log.error("tonieName or playlistName is empty");
+                    System.out.println("Not supported!");
+                    return;
                 }
-                log.debug("Taking a nap");
-                Thread.sleep(60000);
-                log.debug("Up again");
-            }
-        } else {
-            if (StringUtils.isBlank(tonieName) || StringUtils.isBlank(playlistName)) {
-                log.error("tonieName or playlistName is empty");
-                System.out.println("Not supported!");
-                return;
-            }
 
-            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
-            Tonie tonie = getTonieByName(tonieHandler, tonieName);
-            PlaylistSimplified playlist = getPlaylistByName(spotifyHandler, playlistName);
+                SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
+                Tonie tonie = getTonieByName(tonieHandler, tonieName);
+                PlaylistSimplified playlist = getPlaylistByName(spotifyHandler, playlistName);
 
-            if (tonie == null || playlist == null) {
-                log.error("Tonie or Playlist not found");
-                System.out.println("Tonie or Playlist not found");
-                return;
+                if (tonie == null || playlist == null) {
+                    log.error("Tonie or Playlist not found");
+                    System.out.println("Tonie or Playlist not found");
+                    return;
+                }
+                sync(spotifyHandler, tonieHandler, playlist, tonie);
             }
-            sync(spotifyHandler, tonieHandler, playlist, tonie);
+        } catch (IOException e) {
+            log.error("IOException", e);
+        } catch (SpotifyWebApiException e) {
+            log.error("SpotifyWebApiException", e);
+        } catch (InterruptedException e) {
+            log.error("InterruptedException", e);
         }
     }
 
