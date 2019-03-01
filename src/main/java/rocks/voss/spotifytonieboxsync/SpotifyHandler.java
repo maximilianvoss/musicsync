@@ -22,12 +22,11 @@ public class SpotifyHandler {
 
     public static SpotifyHandler createHandlerByProperties(Properties properties) {
         SpotifyHandler spotifyHandler = new SpotifyHandler();
-        spotifyHandler.setClientId(properties.getProperty("clientId"));
-        spotifyHandler.setClientSecret(properties.getProperty("clientSecret"));
-        spotifyHandler.setRedirectUri(SpotifyHttpManager.makeUri(properties.getProperty("redirectUri")));
-        spotifyHandler.setAccessToken(properties.getProperty("accessToken"));
-        spotifyHandler.setRefreshToken(properties.getProperty("refreshToken"));
-        spotifyHandler.setCachePath(properties.getProperty("cachePath"));
+        spotifyHandler.setClientId(properties.getProperty("spotify.clientId"));
+        spotifyHandler.setClientSecret(properties.getProperty("spotify.clientSecret"));
+        spotifyHandler.setRedirectUri(SpotifyHttpManager.makeUri(properties.getProperty("spotify.redirectUri")));
+        spotifyHandler.setRefreshToken(properties.getProperty("spotify.refreshToken"));
+        spotifyHandler.setCachePath(properties.getProperty("spotify.cachePath"));
         return spotifyHandler;
     }
 

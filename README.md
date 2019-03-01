@@ -44,22 +44,22 @@ java -jar spotify-toniebox-sync-[VERSION]-jar-with-dependencies.jar --daemon &
 ## Configuration
 There are 3 properties-file you have to adapt for your personal needs.
 
-### [Spotify.properties](src/main/resources/spotify.properties)
+### Spotify Properties
 This properties file contains everything which is necessary for the Spotify communication and caching audio files which are downloaded from Spotify.
 ```properties
 # Setup to run with Spotify
-clientId=<clientId>
-clientSecret=<clientSecret>
-redirectUri=<redirectUri>
-refreshToken=<refreshToken>
-cachePath=<pathForCaching>
+spotify.clientId=<clientId>
+spotify.clientSecret=<clientSecret>
+spotify.redirectUri=<redirectUri>
+spotify.refreshToken=<refreshToken>
+spotify.cachePath=<pathForCaching>
 ```
 
-You have to setup a ClientId at https://developer.spotify.com for `clientId`, `clientSecret` and `redirectUri`.  
-`redirectUri` can be selected randomly by you, it must be a valid URI but nothing has to be hosted there. You have to use the same here as in the ClientId
+You have to setup a ClientId at https://developer.spotify.com for `spotify.clientId`, `spotify.clientSecret` and `spotify.redirectUri`.  
+`spotify.redirectUri` can be selected randomly by you, it must be a valid URI but nothing has to be hosted there. You have to use the same here as in the ClientId
 
 **To get the refreshToken**
-Fill out `clientId`, `clientSecret` and `redirectUri`.  
+Fill out `spotify.clientId`, `spotify.clientSecret` and `spotify.redirectUri`.  
 Buid the software like described above.
 Run:
 ```bash
@@ -70,7 +70,7 @@ The call will result in some output like
 URI: https://accounts.spotify.com:443/authorize?client_id=e26995898f9f4e4d9bf45b3001e6701d&response_type=code&redirect_uri=https%3A%2F%2Fmaximilian.voss.rocks%2Fspotify-redirect&state=x4xkmn9pu3j6ukrs8n&scope=playlist-read-private%2Cplaylist-read-collaborative%2Cplaylist-modify-private%2Cplaylist-modify-public&show_dialog=true
 ```
 
-Open this URI in your web-browser, enter your credentials, agree and see that you are going to be redirected to `redirectUri`.  
+Open this URI in your web-browser, enter your credentials, agree and see that you are going to be redirected to `spotify.redirectUri`.  
 The URI has a  parameter `data` appended. Take the value (after the data parameter is a state parameter, make sure you don't copy this as well).
 Take the `data` parameter and execute:
 ```bash
@@ -80,11 +80,19 @@ The call will result in some output like
 ```text
 Refresh Token: AQBStXZ6GhKpU-eGSN2GS13d0kITqUBgqeXWgMLlFOSacOpjSQ-nB9F-Y3KOT4dGRB_aAV5bX1T8hDoKQP04hGqJkhhiVonKZgWBFVuWSqoHDEm-eiKKg0nT3qY0nOxEX_zNXg
 ```
-Take the refresh token and fill `refreshToken` in the properties file.
+Take the refresh token and fill `spotify.refreshToken` in the properties file.
 
-As for `cachePath`, select any temp directory where you want to cache the Spotify songs.
+As for `spotify.cachePath`, select any temp directory where you want to cache the Spotify songs.
 
-### [Spotifytonieboxsync.properties](src/main/resources/spotifytonieboxsync.properties)
+### Toniebox Properties 
+Insert your Toniebox credentials here:
+```properties
+# Toniebox credentials
+toniebox.username=<username>
+toniebox.password=<password>
+```
+
+### Daemon Mapping Properties
 If you want to run Spotify Toniebox Sync as a daemon you have to fill this properties file.
 Each mapping[X] is a set of `Tonie Id`;`Spotify Playlist URI`.
 ```properties
@@ -94,14 +102,6 @@ mapping[1]=F969A20D500384E9;spotify:user:dummyuser:playlist:5A52aoIXdtWS20WmZ9FV
 
 `TonieId` can be found in the URL of your creative Tonie.  
 `Spotify Playlist URI`: context menu in Spotify -> Share -> Copy Spotify URI.
-
-### [Toniebox.properties](src/main/resources/toniebox.properites) 
-Insert your Toniebox credentials here:
-```properties
-# Toniebox credentials
-username=<username>
-password=<password>
-```
 
 ## Running Spotify Toniebox Sync on your local environment/server
 Installation based on vanilla Ubuntu 64-bit Server 18.04.1
@@ -139,5 +139,5 @@ nohup Xvfb :99 -screen 0 800x600x16 &
 DISPLAY=:99; export DISPLAY
 nohup pulseaudio --start &
 nohup spotify $SPOTIFY_OPTIONS &
-nohup java -jar spotify-toniebox-sync-1.0-SNAPSHOT-jar-with-dependencies.jar --daemon & 
+nohup java -jar spotify-toniebox-sync-[VERSION]-SNAPSHOT-jar-with-dependencies.jar --daemon & 
 ```

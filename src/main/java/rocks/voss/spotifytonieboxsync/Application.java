@@ -23,10 +23,8 @@ public class Application {
 
     public static void main(String[] args) {
         try {
-            Properties spotifyProperties = getProperties("spotify.properties");
-            Properties tonieboxProperties = getProperties("toniebox.properties");
-            Properties spotifytonieboxsyncProperties = getProperties("spotifytonieboxsync.properties");
-            SpotifyHandler spotifyHandler = SpotifyHandler.createHandlerByProperties(spotifyProperties);
+            Properties appProperties = getProperties("spotify-toniebox-sync.properties");
+            SpotifyHandler spotifyHandler = SpotifyHandler.createHandlerByProperties(appProperties);
 
             String playlistName = null;
             String tonieName = null;
@@ -57,14 +55,14 @@ public class Application {
                 }
             }
 
-            TonieHandler tonieHandler = new TonieHandler(tonieboxProperties.getProperty("username"), tonieboxProperties.getProperty("password"));
+            TonieHandler tonieHandler = new TonieHandler(appProperties.getProperty("toniebox.username"), appProperties.getProperty("toniebox.password"));
             if (isDaemon) {
                 SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
                 List<Pair<Tonie, PlaylistSimplified>> mappings = new ArrayList<>();
                 int i = 0;
                 String mapping;
                 do {
-                    mapping = spotifytonieboxsyncProperties.getProperty("mapping[" + i + "]");
+                    mapping = appProperties.getProperty("mapping[" + i + "]");
                     log.debug("Mapping from file: " + mapping);
                     if (mapping != null) {
                         String[] pairs = mapping.split(";");
