@@ -49,61 +49,18 @@ public class Application {
                 } else if (StringUtils.equals(arg, "--daemon") && args.length == 1) {
                     isDaemon = true;
                 } else {
-                    log.error("command not supported: " + arg);
-                    System.out.println("Not supported!");
+                    printHelp();
                     return;
                 }
             }
-
             TonieHandler tonieHandler = new TonieHandler(appProperties.getProperty("toniebox.username"), appProperties.getProperty("toniebox.password"));
+
             if (isDaemon) {
-                SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
-                List<Pair<Tonie, PlaylistSimplified>> mappings = new ArrayList<>();
-                int i = 0;
-                String mapping;
-                do {
-                    mapping = appProperties.getProperty("mapping[" + i + "]");
-                    log.debug("Mapping from file: " + mapping);
-                    if (mapping != null) {
-                        String[] pairs = mapping.split(";");
-                        Tonie tonie = getTonieById(tonieHandler, pairs[0]);
-                        PlaylistSimplified playlist = getPlaylistByUri(spotifyHandler, pairs[1]);
-                        if (tonie != null && playlist != null) {
-                            log.trace("Added Tuple");
-                            mappings.add(Pair.of(tonie, playlist));
-                        } else {
-                            log.error("Tonie or Playlist not found");
-                        }
-                    }
-                    i++;
-                } while (mapping != null);
-
-                while (true) {
-                    for (Pair<Tonie, PlaylistSimplified> pair : mappings) {
-                        sync(spotifyHandler, tonieHandler, pair.getRight(), pair.getLeft());
-                    }
-                    log.debug("Taking a nap");
-                    Thread.sleep(60000);
-                    log.debug("Up again");
-                }
+                daemonExecution(appProperties, spotifyHandler, tonieHandler);
             } else {
-                if (StringUtils.isBlank(tonieName) || StringUtils.isBlank(playlistName)) {
-                    log.error("tonieName or playlistName is empty");
-                    System.out.println("Not supported!");
-                    return;
-                }
-
-                SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
-                Tonie tonie = getTonieByName(tonieHandler, tonieName);
-                PlaylistSimplified playlist = getPlaylistByName(spotifyHandler, playlistName);
-
-                if (tonie == null || playlist == null) {
-                    log.error("Tonie or Playlist not found");
-                    System.out.println("Tonie or Playlist not found");
-                    return;
-                }
-                sync(spotifyHandler, tonieHandler, playlist, tonie);
+                singleExecution(spotifyHandler, tonieHandler, playlistName, tonieName);
             }
+
         } catch (IOException e) {
             log.error("IOException", e);
         } catch (SpotifyWebApiException e) {
@@ -113,7 +70,71 @@ public class Application {
         }
     }
 
-    private static void sync(SpotifyHandler spotifyHandler, TonieHandler tonieHandler, PlaylistSimplified playlist, Tonie tonie) throws IOException, SpotifyWebApiException, InterruptedException {
+    private static void daemonExecution(Properties appProperties, SpotifyHandler spotifyHandler, TonieHandler tonieHandler) throws IOException, SpotifyWebApiException, InterruptedException {
+        List<Pair<Tonie, PlaylistSimplified>> mappings = new ArrayList<>();
+        int i = 0;
+        String mapping;
+        do {
+            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
+            mapping = appProperties.getProperty("mapping[" + i + "]");
+            log.debug("Mapping from file: " + mapping);
+            if (mapping != null) {
+                String[] pairs = mapping.split(";");
+                Tonie tonie = getTonieById(tonieHandler, pairs[0]);
+                PlaylistSimplified playlist = getPlaylistByUri(spotifyHandler, pairs[1]);
+                if (tonie != null && playlist != null) {
+                    log.trace("Added Tuple");
+                    mappings.add(Pair.of(tonie, playlist));
+                } else {
+                    log.error("Tonie or Playlist not found");
+                }
+            }
+            i++;
+        } while (mapping != null);
+
+        while (true) {
+            for (Pair<Tonie, PlaylistSimplified> pair : mappings) {
+                sync(spotifyHandler, tonieHandler, pair.getRight(), pair.getLeft());
+            }
+            log.debug("Taking a nap");
+            Thread.sleep(60000);
+            log.debug("Up again");
+        }
+    }
+
+    private static void singleExecution(SpotifyHandler spotifyHandler, TonieHandler tonieHandler, String playlistName, String tonieName) throws IOException, SpotifyWebApiException, InterruptedException {
+        if (StringUtils.isBlank(tonieName) || StringUtils.isBlank(playlistName)) {
+            log.error("tonieName or playlistName is empty");
+            printHelp();
+            return;
+        }
+
+        SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
+        Tonie tonie = getTonieByName(tonieHandler, tonieName);
+        PlaylistSimplified playlist = getPlaylistByName(spotifyHandler, playlistName);
+
+        if (tonie == null || playlist == null) {
+            log.error("Tonie or Playlist not found");
+            System.out.println("Tonie or Playlist not found");
+            return;
+        }
+        sync(spotifyHandler, tonieHandler, playlist, tonie);
+    }
+
+    private static void printHelp() {
+        StringBuffer help = new StringBuffer();
+        help.append("Usage: spotify-toniebox-sync.jar ")
+        .append("[--apicode | [--code CODE] | [--playlist PLAYLIST --tonie TONIE | --daemon]\n")
+        .append("--apicode\t\t\t\t\t\t\tGenerate an API Code URL to get attach Application to Spotify Account\n")
+        .append("--code CODE\t\t\t\t\t\tGenerate a Refresh token out of the Spotify Code\n")
+        .append("--playlist PLAYLIST --tonie TONIE\tSync the PLAYLIST to tonie TONIE once\n")
+        .append("--daemon\t\t\t\t\t\t\tRun in daemon mode to sync periodically all lists in the properties file\n");
+        System.out.println(help.toString());
+    }
+
+
+    private static void sync(SpotifyHandler spotifyHandler, TonieHandler tonieHandler, PlaylistSimplified
+            playlist, Tonie tonie) throws IOException, SpotifyWebApiException, InterruptedException {
         List<PlaylistTrack> allTracks = PlaylistHandler.getTracks(spotifyHandler, playlist);
         TonieChapterBean[] allChapters = tonieHandler.getTonieDetails(tonie).getData().getChapters();
 
@@ -154,7 +175,8 @@ public class Application {
         return null;
     }
 
-    private static PlaylistSimplified getPlaylistByName(SpotifyHandler spotifyHandler, String playlistName) throws IOException, SpotifyWebApiException {
+    private static PlaylistSimplified getPlaylistByName(SpotifyHandler spotifyHandler, String playlistName) throws
+            IOException, SpotifyWebApiException {
         List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(spotifyHandler);
         for (PlaylistSimplified playlist : playlists) {
             log.trace("Playlist name: " + playlist.getName());
@@ -166,7 +188,8 @@ public class Application {
         return null;
     }
 
-    private static PlaylistSimplified getPlaylistByUri(SpotifyHandler spotifyHandler, String playlistUri) throws IOException, SpotifyWebApiException {
+    private static PlaylistSimplified getPlaylistByUri(SpotifyHandler spotifyHandler, String playlistUri) throws
+            IOException, SpotifyWebApiException {
         List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(spotifyHandler);
         for (PlaylistSimplified playlist : playlists) {
             log.trace("Playlist id: " + playlist.getUri());
@@ -178,7 +201,8 @@ public class Application {
         return null;
     }
 
-    private static void startDownload(TonieHandler tonieHandler, SpotifyHandler spotifyHandler, Tonie tonie, List<PlaylistTrack> tracks) throws IOException, InterruptedException {
+    private static void startDownload(TonieHandler tonieHandler, SpotifyHandler spotifyHandler, Tonie
+            tonie, List<PlaylistTrack> tracks) throws IOException, InterruptedException {
         for (PlaylistTrack track : tracks) {
             log.debug("Track: " + track.getTrack().getId());
             String trackFilename = track.getTrack().getId() + ".mp3";
@@ -203,7 +227,8 @@ public class Application {
         }
     }
 
-    private static void deleteChapter(TonieHandler tonieHandler, Tonie tonie, List<TonieChapterBean> chapters) throws IOException {
+    private static void deleteChapter(TonieHandler tonieHandler, Tonie tonie, List<TonieChapterBean> chapters) throws
+            IOException {
         for (TonieChapterBean chapter : chapters) {
             log.debug("Deleting chapter: " + chapter.getTitle());
             tonieHandler.deleteChapter(tonie, chapter);
