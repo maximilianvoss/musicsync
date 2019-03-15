@@ -10,7 +10,8 @@ import java.io.IOException;
 public class SpotifyRecordingHandler {
     private static Logger log = Logger.getLogger(SpotifyRecordingHandler.class.getName());
 
-    public static void recordTrack(SpotifyHandler spotifyHandler, PlaylistTrack track, String filename) throws IOException, InterruptedException {
+    public static void recordTrack(SpotifyHandler spotifyHandler, PlaylistTrack track, String filename)
+            throws IOException, InterruptedException {
         new File(spotifyHandler.getCachePath()).mkdirs();
         File dir = new File(spotifyHandler.getCachePath());
         File[] files = dir.listFiles((directory, dirFile) -> StringUtils.equals(dirFile, filename));

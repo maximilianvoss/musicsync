@@ -13,7 +13,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PlaylistHandler {
-    public static List<PlaylistSimplified> getPlaylists(SpotifyHandler spotifyHandler) throws IOException, SpotifyWebApiException {
+    public static List<PlaylistSimplified> getPlaylists(SpotifyHandler spotifyHandler)
+            throws IOException, SpotifyWebApiException {
         int offset = 0;
         int limit = 10;
         List<PlaylistSimplified> playlists = new ArrayList<>();
@@ -32,7 +33,8 @@ public class PlaylistHandler {
         return playlists;
     }
 
-    public static List<PlaylistTrack> getTracks(SpotifyHandler spotifyHandler, PlaylistSimplified playlist) throws IOException, SpotifyWebApiException {
+    public static List<PlaylistTrack> getTracks(SpotifyHandler spotifyHandler, PlaylistSimplified playlist)
+            throws IOException, SpotifyWebApiException {
         int offset = 0;
         int limit = 10;
         List<PlaylistTrack> tracks = new ArrayList<>();

@@ -60,11 +60,10 @@ public class Application {
             List<CreativeTonie> creativeTonies = tonieHandler.getCreativeTonies(households.get(0));
 
             if (isDaemon) {
-                daemonExecution(appProperties, spotifyHandler, tonieHandler, creativeTonies);
+                daemonExecution(appProperties, spotifyHandler, creativeTonies);
             } else {
-                singleExecution(spotifyHandler, tonieHandler, creativeTonies, playlistName, tonieName);
+                singleExecution(spotifyHandler, creativeTonies, playlistName, tonieName);
             }
-
         } catch (IOException e) {
             log.error("IOException", e);
         } catch (SpotifyWebApiException e) {
@@ -74,7 +73,8 @@ public class Application {
         }
     }
 
-    private static void daemonExecution(Properties appProperties, SpotifyHandler spotifyHandler, TonieHandler tonieHandler, List<CreativeTonie> creativeTonies) throws IOException, SpotifyWebApiException, InterruptedException {
+    private static void daemonExecution(Properties appProperties, SpotifyHandler spotifyHandler, List<CreativeTonie> creativeTonies)
+            throws IOException, SpotifyWebApiException, InterruptedException {
         List<Pair<CreativeTonie, PlaylistSimplified>> mappings = new ArrayList<>();
         int i = 0;
         String mapping;
@@ -98,7 +98,15 @@ public class Application {
 
         while (true) {
             for (Pair<CreativeTonie, PlaylistSimplified> pair : mappings) {
-                sync(spotifyHandler, pair.getRight(), pair.getLeft());
+                try {
+                    sync(spotifyHandler, pair.getRight(), pair.getLeft());
+                } catch (SpotifyWebApiException e) {
+                    log.error("SpotifyWebApiException during sync execution: ", e);
+                } catch (IOException e) {
+                    log.error("IOException during sync execution: ", e);
+                } catch (InterruptedException e) {
+                    log.error("InterruptedException during sync execution: ", e);
+                }
             }
             log.debug("Taking a nap");
             Thread.sleep(60000);
@@ -106,7 +114,8 @@ public class Application {
         }
     }
 
-    private static void singleExecution(SpotifyHandler spotifyHandler, TonieHandler tonieHandler, List<CreativeTonie> creativeTonies, String playlistName, String tonieName) throws IOException, SpotifyWebApiException, InterruptedException {
+    private static void singleExecution(SpotifyHandler spotifyHandler, List<CreativeTonie> creativeTonies, String playlistName, String tonieName)
+            throws IOException, SpotifyWebApiException, InterruptedException {
         if (StringUtils.isBlank(tonieName) || StringUtils.isBlank(playlistName)) {
             log.error("tonieName or playlistName is empty");
             printHelp();
@@ -137,8 +146,8 @@ public class Application {
     }
 
 
-    private static void sync(SpotifyHandler spotifyHandler, PlaylistSimplified
-            playlist, CreativeTonie tonie) throws IOException, SpotifyWebApiException, InterruptedException {
+    private static void sync(SpotifyHandler spotifyHandler, PlaylistSimplified playlist, CreativeTonie tonie)
+            throws IOException, SpotifyWebApiException, InterruptedException {
         List<PlaylistTrack> allTracks = PlaylistHandler.getTracks(spotifyHandler, playlist);
 
         List<Chapter> chaptersToRemove = PlaylistUtils.determineChaptersToRemove(allTracks, tonie.getChapters());
@@ -148,13 +157,13 @@ public class Application {
         deleteCacheFileForTracks(spotifyHandler, trackCacheToClean);
 
         List<PlaylistTrack> tracks = PlaylistUtils.getDownloadList(allTracks, tonie.getChapters());
-        startDownload(spotifyHandler, tonie, tracks);
+        transferFromSpotifyToToniebox(spotifyHandler, tonie, tracks);
 
         tonie.setChapters(PlaylistUtils.getSortedChapterList(allTracks, tonie.getChapters()));
         tonie.commit();
     }
 
-    private static CreativeTonie getTonieByName(List<CreativeTonie> creativeTonies, String tonieName) throws IOException {
+    private static CreativeTonie getTonieByName(List<CreativeTonie> creativeTonies, String tonieName) {
         for (CreativeTonie tonie : creativeTonies) {
             log.trace("tonie: " + tonie);
             if (StringUtils.equals(tonie.getName(), tonieName)) {
@@ -165,7 +174,7 @@ public class Application {
         return null;
     }
 
-    private static CreativeTonie getTonieById(List<CreativeTonie> creativeTonies, String tonieId) throws IOException {
+    private static CreativeTonie getTonieById(List<CreativeTonie> creativeTonies, String tonieId) {
         for (CreativeTonie tonie : creativeTonies) {
             log.trace("tonie: " + tonie);
             if (StringUtils.equals(tonie.getId(), tonieId)) {
@@ -176,8 +185,8 @@ public class Application {
         return null;
     }
 
-    private static PlaylistSimplified getPlaylistByName(SpotifyHandler spotifyHandler, String playlistName) throws
-            IOException, SpotifyWebApiException {
+    private static PlaylistSimplified getPlaylistByName(SpotifyHandler spotifyHandler, String playlistName)
+            throws IOException, SpotifyWebApiException {
         List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(spotifyHandler);
         for (PlaylistSimplified playlist : playlists) {
             log.trace("Playlist name: " + playlist.getName());
@@ -189,8 +198,8 @@ public class Application {
         return null;
     }
 
-    private static PlaylistSimplified getPlaylistByUri(SpotifyHandler spotifyHandler, String playlistUri) throws
-            IOException, SpotifyWebApiException {
+    private static PlaylistSimplified getPlaylistByUri(SpotifyHandler spotifyHandler, String playlistUri)
+            throws IOException, SpotifyWebApiException {
         List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(spotifyHandler);
         for (PlaylistSimplified playlist : playlists) {
             log.trace("Playlist id: " + playlist.getUri());
@@ -202,8 +211,8 @@ public class Application {
         return null;
     }
 
-    private static void startDownload(SpotifyHandler spotifyHandler, CreativeTonie
-            tonie, List<PlaylistTrack> tracks) throws IOException, InterruptedException {
+    private static void transferFromSpotifyToToniebox(SpotifyHandler spotifyHandler, CreativeTonie tonie, List<PlaylistTrack> tracks)
+            throws IOException, InterruptedException {
         for (PlaylistTrack track : tracks) {
             log.debug("Track: " + track.getTrack().getId());
             String trackFilename = track.getTrack().getId() + ".mp3";

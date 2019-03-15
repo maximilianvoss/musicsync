@@ -13,7 +13,8 @@ import java.net.URI;
 public class SpotifyAuthenticationSetup {
     private static Logger log = Logger.getLogger(SpotifyAuthenticationSetup.class.getName());
 
-    public static void getAccessToken(SpotifyHandler spotifyHandler, String code) throws IOException, SpotifyWebApiException {
+    public static void getAccessToken(SpotifyHandler spotifyHandler, String code)
+            throws IOException, SpotifyWebApiException {
         AuthorizationCodeRequest authorizationCodeRequest = spotifyHandler.getSpotifyApi().authorizationCode(code)
                 .build();
         final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRequest.execute();
@@ -36,7 +37,8 @@ public class SpotifyAuthenticationSetup {
     }
 
 
-    public static void refreshToken(SpotifyHandler spotifyHandler) throws IOException, SpotifyWebApiException {
+    public static void refreshToken(SpotifyHandler spotifyHandler)
+            throws IOException, SpotifyWebApiException {
         AuthorizationCodeRefreshRequest authorizationCodeRefreshRequest = spotifyHandler.getSpotifyApi().authorizationCodeRefresh().build();
         final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRefreshRequest.execute();
 
