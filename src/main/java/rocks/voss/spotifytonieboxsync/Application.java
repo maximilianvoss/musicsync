@@ -79,8 +79,8 @@ class Application {
         List<Pair<CreativeTonie, PlaylistSimplified>> mappings = new ArrayList<>();
         int i = 0;
         String mapping;
+        SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
         do {
-            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
             mapping = appProperties.getProperty("mapping[" + i + "]");
             log.debug("Mapping from file: " + mapping);
             if (mapping != null) {
@@ -98,6 +98,7 @@ class Application {
         } while (mapping != null);
 
         while (true) {
+            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
             for (Pair<CreativeTonie, PlaylistSimplified> pair : mappings) {
                 try {
                     sync(spotifyHandler, pair.getRight(), pair.getLeft());
