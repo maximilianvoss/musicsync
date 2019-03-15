@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class PlaylistUtils {
-    private static Logger log = Logger.getLogger(PlaylistUtils.class.getName());
+class PlaylistUtils {
+    final private static Logger log = Logger.getLogger(PlaylistUtils.class.getName());
 
     public static List<Chapter> determineChaptersToRemove(List<PlaylistTrack> tracks, Chapter[] chapters) {
         List<Chapter> resultList = new ArrayList<>(chapters.length);

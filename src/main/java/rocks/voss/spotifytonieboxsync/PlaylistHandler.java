@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class PlaylistHandler {
+class PlaylistHandler {
     public static List<PlaylistSimplified> getPlaylists(SpotifyHandler spotifyHandler)
             throws IOException, SpotifyWebApiException {
         int offset = 0;

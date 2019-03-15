@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.Properties;
 
 @Data
-public class SpotifyHandler {
+class SpotifyHandler {
     private String clientId;
     private String clientSecret;
     private URI redirectUri;

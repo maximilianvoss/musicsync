@@ -7,8 +7,8 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 
-public class SpotifyRecordingHandler {
-    private static Logger log = Logger.getLogger(SpotifyRecordingHandler.class.getName());
+class SpotifyRecordingHandler {
+    final private static Logger log = Logger.getLogger(SpotifyRecordingHandler.class.getName());
 
     public static void recordTrack(SpotifyHandler spotifyHandler, PlaylistTrack track, String filename)
             throws IOException, InterruptedException {
@@ -16,8 +16,7 @@ public class SpotifyRecordingHandler {
         File dir = new File(spotifyHandler.getCachePath());
         File[] files = dir.listFiles((directory, dirFile) -> StringUtils.equals(dirFile, filename));
 
-
-        if (files.length == 0) {
+        if (files != null && files.length == 0) {
             log.debug("File does not exist: " + filename);
             log.info("Downloading: " + track.getTrack().getUri());
             Runtime rt = Runtime.getRuntime();

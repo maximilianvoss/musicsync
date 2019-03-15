@@ -10,8 +10,8 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.URI;
 
-public class SpotifyAuthenticationSetup {
-    private static Logger log = Logger.getLogger(SpotifyAuthenticationSetup.class.getName());
+class SpotifyAuthenticationSetup {
+    final private static Logger log = Logger.getLogger(SpotifyAuthenticationSetup.class.getName());
 
     public static void getAccessToken(SpotifyHandler spotifyHandler, String code)
             throws IOException, SpotifyWebApiException {

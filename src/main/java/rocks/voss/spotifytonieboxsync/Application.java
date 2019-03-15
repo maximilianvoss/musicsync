@@ -19,12 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-public class Application {
-    private static Logger log = Logger.getLogger(Application.class.getName());
+class Application {
+    final private static Logger log = Logger.getLogger(Application.class.getName());
+    final private static String PROPERTIES_FILE = "spotify-toniebox-sync.properties";
 
     public static void main(String[] args) {
         try {
-            Properties appProperties = getProperties("spotify-toniebox-sync.properties");
+            Properties appProperties = getProperties();
             SpotifyHandler spotifyHandler = SpotifyHandler.createHandlerByProperties(appProperties);
 
             String playlistName = null;
@@ -135,14 +136,13 @@ public class Application {
     }
 
     private static void printHelp() {
-        StringBuffer help = new StringBuffer();
-        help.append("Usage: spotify-toniebox-sync.jar ")
-                .append("[--apicode | [--code CODE] | [--playlist PLAYLIST --tonie TONIE | --daemon]\n")
-                .append("--apicode\t\t\t\t\t\t\tGenerate an API Code URL to get attach Application to Spotify Account\n")
-                .append("--code CODE\t\t\t\t\t\tGenerate a Refresh token out of the Spotify Code\n")
-                .append("--playlist PLAYLIST --tonie TONIE\tSync the PLAYLIST to tonie TONIE once\n")
-                .append("--daemon\t\t\t\t\t\t\tRun in daemon mode to sync periodically all lists in the properties file\n");
-        System.out.println(help.toString());
+        String help = "Usage: spotify-toniebox-sync.jar " +
+                "[--apicode | [--code CODE] | [--playlist PLAYLIST --tonie TONIE | --daemon]\n" +
+                "--apicode\t\t\t\t\t\t\tGenerate an API Code URL to get attach Application to Spotify Account\n" +
+                "--code CODE\t\t\t\t\t\tGenerate a Refresh token out of the Spotify Code\n" +
+                "--playlist PLAYLIST --tonie TONIE\tSync the PLAYLIST to tonie TONIE once\n" +
+                "--daemon\t\t\t\t\t\t\tRun in daemon mode to sync periodically all lists in the properties file\n";
+        System.out.println(help);
     }
 
 
@@ -244,17 +244,19 @@ public class Application {
         }
     }
 
-    private static Properties getProperties(String propertiesFile) throws IOException {
+    private static Properties getProperties() throws IOException {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream stream;
-        if (new File("./" + propertiesFile).exists()) {
-            stream = new FileInputStream("./" + propertiesFile);
+        if (new File("./" + PROPERTIES_FILE).exists()) {
+            stream = new FileInputStream("./" + PROPERTIES_FILE);
         } else {
-            stream = loader.getResourceAsStream(propertiesFile);
+            stream = loader.getResourceAsStream(PROPERTIES_FILE);
         }
         Properties properties = new Properties();
         properties.load(stream);
-        stream.close();
+        if (stream != null) {
+            stream.close();
+        }
 
         return properties;
     }
