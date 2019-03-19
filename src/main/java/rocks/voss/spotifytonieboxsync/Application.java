@@ -1,6 +1,7 @@
 package rocks.voss.spotifytonieboxsync;
 
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
+import com.wrapper.spotify.exceptions.detailed.ServiceUnavailableException;
 import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
 import org.apache.commons.lang3.StringUtils;
@@ -102,6 +103,8 @@ class Application {
             for (Pair<CreativeTonie, PlaylistSimplified> pair : mappings) {
                 try {
                     sync(spotifyHandler, pair.getRight(), pair.getLeft());
+                } catch (ServiceUnavailableException e) {
+                    log.error("ServiceUnavailableException during sync execution: ", e);
                 } catch (SpotifyWebApiException e) {
                     log.error("SpotifyWebApiException during sync execution: ", e);
                 } catch (IOException e) {
