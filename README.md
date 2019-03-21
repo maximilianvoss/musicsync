@@ -90,7 +90,22 @@ Insert your Toniebox credentials here:
 # Toniebox credentials
 toniebox.username=<username>
 toniebox.password=<password>
+toniebox.trackname="%d - %a - %n"
 ```
+
+### Trackname 
+If you want to name your toniebox users in a specific schema you have the possibility to set `toniebox.trackname` accordingly.
+The available variables are:
+
+| Variable | Meaning    |
+|----------|------------|
+| %i | Spotify track Id |
+| %a | Artist names     |
+| %n | Track name       |
+| %d | Disc number      |
+| %t | Track number     |
+
+The Trackname must always start with the Track Id. This will be used to determine if a track is already uploaded.
 
 ### Daemon Mapping Properties
 If you want to run Spotify Toniebox Sync as a daemon you have to fill this properties file.

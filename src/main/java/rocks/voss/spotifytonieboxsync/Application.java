@@ -23,10 +23,11 @@ import java.util.Properties;
 class Application {
     final private static Logger log = Logger.getLogger(Application.class.getName());
     final private static String PROPERTIES_FILE = "spotify-toniebox-sync.properties";
+    private static Properties appProperties;
 
     public static void main(String[] args) {
         try {
-            Properties appProperties = getProperties();
+            appProperties = getProperties();
             SpotifyHandler spotifyHandler = SpotifyHandler.createHandlerByProperties(appProperties);
 
             String playlistName = null;
@@ -62,7 +63,7 @@ class Application {
             List<CreativeTonie> creativeTonies = tonieHandler.getCreativeTonies(households.get(0));
 
             if (isDaemon) {
-                daemonExecution(appProperties, spotifyHandler, creativeTonies);
+                daemonExecution(spotifyHandler, creativeTonies);
             } else {
                 singleExecution(spotifyHandler, creativeTonies, playlistName, tonieName);
             }
@@ -75,7 +76,7 @@ class Application {
         }
     }
 
-    private static void daemonExecution(Properties appProperties, SpotifyHandler spotifyHandler, List<CreativeTonie> creativeTonies)
+    private static void daemonExecution(SpotifyHandler spotifyHandler, List<CreativeTonie> creativeTonies)
             throws IOException, SpotifyWebApiException, InterruptedException {
         List<Pair<CreativeTonie, PlaylistSimplified>> mappings = new ArrayList<>();
         int i = 0;
@@ -227,7 +228,16 @@ class Application {
     }
 
     private static String getTrackTitle(PlaylistTrack track) {
-        String trackTitle = track.getTrack().getId() + " - " + track.getTrack().getArtists()[0].getName() + " - " + track.getTrack().getName();
+        String trackTitle = appProperties.getProperty("toniebox.trackname");
+        if ( StringUtils.isBlank(trackTitle)) {
+            trackTitle = "%d - %a - %n";
+        }
+        trackTitle = StringUtils.replace(trackTitle, "%i", track.getTrack().getId());
+        trackTitle = StringUtils.replace(trackTitle, "%a", track.getTrack().getArtists()[0].getName());
+        trackTitle = StringUtils.replace(trackTitle, "%n", track.getTrack().getName());
+        trackTitle = StringUtils.replace(trackTitle, "%d", String.valueOf(track.getTrack().getDiscNumber()));
+        trackTitle = StringUtils.replace(trackTitle, "%t", String.valueOf(track.getTrack().getTrackNumber()));
+
         log.debug(trackTitle);
         return trackTitle;
     }
