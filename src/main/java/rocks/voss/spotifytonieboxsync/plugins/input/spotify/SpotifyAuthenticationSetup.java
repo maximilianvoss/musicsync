@@ -1,4 +1,4 @@
-package rocks.voss.spotifytonieboxsync;
+package rocks.voss.spotifytonieboxsync.plugins.input.spotify;
 
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.AuthorizationCodeCredentials;
@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.net.URI;
 
-class SpotifyAuthenticationSetup {
+public class SpotifyAuthenticationSetup {
     final private static Logger log = Logger.getLogger(SpotifyAuthenticationSetup.class.getName());
 
     public static void getAccessToken(SpotifyHandler spotifyHandler, String code)

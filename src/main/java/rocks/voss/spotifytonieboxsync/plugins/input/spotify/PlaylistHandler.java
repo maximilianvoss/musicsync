@@ -1,4 +1,4 @@
-package rocks.voss.spotifytonieboxsync;
+package rocks.voss.spotifytonieboxsync.plugins.input.spotify;
 
 import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.specification.Paging;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class PlaylistHandler {
+public class PlaylistHandler {
     public static List<PlaylistSimplified> getPlaylists(SpotifyHandler spotifyHandler)
             throws IOException, SpotifyWebApiException {
         int offset = 0;

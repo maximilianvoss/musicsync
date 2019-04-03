@@ -1,4 +1,4 @@
-package rocks.voss.spotifytonieboxsync;
+package rocks.voss.spotifytonieboxsync.plugins.input.spotify;
 
 import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.SpotifyHttpManager;
@@ -10,7 +10,7 @@ import java.net.URI;
 import java.util.Properties;
 
 @Data
-class SpotifyHandler {
+public class SpotifyHandler {
     private String clientId;
     private String clientSecret;
     private URI redirectUri;

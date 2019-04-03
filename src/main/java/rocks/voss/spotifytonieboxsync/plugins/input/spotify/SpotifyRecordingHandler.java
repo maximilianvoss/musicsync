@@ -1,4 +1,4 @@
-package rocks.voss.spotifytonieboxsync;
+package rocks.voss.spotifytonieboxsync.plugins.input.spotify;
 
 import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
 import org.apache.commons.lang3.StringUtils;
@@ -7,7 +7,7 @@ import org.apache.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 
-class SpotifyRecordingHandler {
+public class SpotifyRecordingHandler {
     final private static Logger log = Logger.getLogger(SpotifyRecordingHandler.class.getName());
 
     public static void recordTrack(SpotifyHandler spotifyHandler, PlaylistTrack track, String filename)
