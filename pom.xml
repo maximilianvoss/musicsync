@@ -9,6 +9,7 @@
     <version>2.0-SNAPSHOT</version>
     <name>Spotiy TonieBox Sync</name>
     <url>https://maximilian.voss.rocks</url>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -17,11 +18,6 @@
     </properties>
 
     <dependencies>
-        <dependency>
-            <groupId>se.michaelthelin.spotify</groupId>
-            <artifactId>spotify-web-api-java</artifactId>
-            <version>2.1.2</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
@@ -37,16 +33,6 @@
             <artifactId>lombok</artifactId>
             <version>1.18.4</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.11</version>
-        </dependency>
-        <dependency>
-            <groupId>rocks.voss</groupId>
-            <artifactId>toniebox-api</artifactId>
-            <version>2.4</version>
         </dependency>
     </dependencies>
 
@@ -100,4 +86,10 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <modules>
+        <module>api</module>
+        <module>application</module>
+        <module>plugins</module>
+    </modules>
 </project>

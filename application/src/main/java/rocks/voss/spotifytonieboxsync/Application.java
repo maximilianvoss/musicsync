@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Properties;
 
 public class Application {
-    final private static Logger log = Logger.getLogger(ApplicationOld.class.getName());
+    final private static Logger log = Logger.getLogger(Application.class.getName());
     final private static String PROPERTIES_FILE = "spotify-toniebox-sync.properties";
 
     private static List<SyncConnection> connections;
@@ -36,17 +36,17 @@ public class Application {
 
         connections = getConnections(properties);
         PluginLoader.registerConnections(connections);
-//
-//        if (isDaemon) {
-//            while (true) {
-//                sync(connections);
-//                log.debug("Taking a nap");
-//                Thread.sleep(60000);
-//                log.debug("Up again");
-//            }
-//        } else {
-        sync(connections);
-//        }
+
+        if (isDaemon) {
+            while (true) {
+                sync(connections);
+                log.debug("Taking a nap");
+                Thread.sleep(60000);
+                log.debug("Up again");
+            }
+        } else {
+            sync(connections);
+        }
     }
 
     private static void sync(List<SyncConnection> connections) {
@@ -56,8 +56,8 @@ public class Application {
 
             List<SyncTrack> tracks = inputPlugin.getTracklist(connection);
             List<SyncTrack> tracksToSync = new ArrayList<>();
-            for ( SyncTrack track : tracks ) {
-                if (! outputPlugin.isTrackUploaded(connection, track )) {
+            for (SyncTrack track : tracks) {
+                if (!outputPlugin.isTrackUploaded(connection, track)) {
                     tracksToSync.add(track);
                 }
             }
