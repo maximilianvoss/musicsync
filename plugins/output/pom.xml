@@ -6,11 +6,15 @@
 
     <parent>
         <groupId>rocks.voss</groupId>
-        <artifactId>musicsync</artifactId>
+        <artifactId>musicsync-plugins</artifactId>
         <version>2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>musicsync-api</artifactId>
-    <name>Music Sync API</name>
-    <packaging>jar</packaging>
+    <artifactId>musicsync-plugins-output</artifactId>
+    <name>Music Sync Output Plugins</name>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>toniebox</module>
+    </modules>
 </project>
