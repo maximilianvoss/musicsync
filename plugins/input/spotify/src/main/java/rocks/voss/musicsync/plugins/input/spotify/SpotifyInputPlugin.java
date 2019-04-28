@@ -27,18 +27,18 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     public boolean parseArguments(String[] args) throws Exception {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
-            if (StringUtils.equals(arg, "--apicode") && args.length == 1) {
-                log.trace("--apicode");
+            if (StringUtils.equals(arg, "--spotify-apicode") && args.length == 1) {
+                log.trace("--spotify-apicode");
                 SpotifyAuthenticationSetup.getSignInUrl(spotifyHandler);
                 return true;
-            } else if (StringUtils.equals(arg, "--code") && args.length == 2) {
+            } else if (StringUtils.equals(arg, "--spotify-code") && args.length == 2) {
                 String code = args[++i];
-                log.trace("--code: " + code);
+                log.trace("--spotify-code: " + code);
                 SpotifyAuthenticationSetup.getAccessToken(spotifyHandler, code);
                 return true;
-            } else if (StringUtils.equals(arg, "--apicode") && args.length != 1) {
+            } else if (StringUtils.equals(arg, "--spotify-apicode") && args.length != 1) {
                 return false;
-            } else if (StringUtils.equals(arg, "--code") && args.length != 2) {
+            } else if (StringUtils.equals(arg, "--spotify-code") && args.length != 2) {
                 return false;
             }
         }
@@ -47,8 +47,8 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
 
     @Override
     public String helpScreen() {
-        return "--apicode\n\t\tGenerate an API Code URL to get attach Application to Spotify Account\n" +
-                "--code CODE\n\t\tGenerate a Refresh token out of the Spotify Code\n";
+        return "--spotify-apicode\n\t\tGenerate an API Code URL to get attach Application to Spotify Account\n" +
+                "--spotify-code CODE\n\t\tGenerate a Refresh token out of the Spotify Code\n";
     }
 
     @Override

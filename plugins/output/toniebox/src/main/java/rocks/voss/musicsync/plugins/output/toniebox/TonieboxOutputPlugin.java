@@ -23,10 +23,13 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     private List<Household> households;
     private TonieHandler tonieHandler = new TonieHandler();
     private Map<SyncConnection, CreativeTonie> tonieCache = new HashMap<>();
+    private String username;
+    private String password;
 
     @Override
     public String helpScreen() {
-        return "";
+        return "--toniebox-username USERNAME\n\t\tSet the Toniebox username to login to Toniebox\n" +
+                "--toniebox-password PASSWORD\n\t\tSet the password for the Toniebox user for login\n";
     }
 
     @Override
@@ -120,12 +123,22 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public void init(Properties properties) throws Exception {
-        tonieHandler.login(properties.getProperty("toniebox.username"), properties.getProperty("toniebox.password"));
-        households = tonieHandler.getHouseholds();
+        username = properties.getProperty("toniebox.username");
+        password = properties.getProperty("toniebox.password");
     }
 
     @Override
     public boolean parseArguments(String[] args) throws Exception {
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[i];
+            if (StringUtils.equals(arg, "--toniebox-username")) {
+                username = args[++i];
+            } else if (StringUtils.equals(arg, "--toniebox-password")) {
+                password = args[++i];
+            }
+        }
+        tonieHandler.login(username, password);
+        households = tonieHandler.getHouseholds();
         return true;
     }
 
