@@ -23,8 +23,8 @@ public class Application {
     private static List<SyncConnection> connections;
     private static Properties properties;
     private static boolean isDaemon = false;
-    private static String argInputUri;
-    private static String argOutputUri;
+    private static String argInputUri = null;
+    private static String argOutputUri = null;
 
     public static void main(String[] args) throws Exception {
         properties = getProperties();
@@ -107,10 +107,10 @@ public class Application {
             }
         }
 
-        if (isDaemon && StringUtils.isBlank(argInputUri) && StringUtils.isBlank(argOutputUri)) {
+        if (isDaemon && StringUtils.isEmpty(argInputUri) && StringUtils.isEmpty(argOutputUri)) {
             log.debug("Daemon parameters okay");
             return true;
-        } else if (!isDaemon && StringUtils.isNotBlank(argInputUri) && StringUtils.isNotBlank(argOutputUri)) {
+        } else if (!isDaemon && StringUtils.isNotEmpty(argInputUri) && StringUtils.isNotEmpty(argOutputUri)) {
             log.debug("No Daemon parameters okay");
             return true;
         } else {
