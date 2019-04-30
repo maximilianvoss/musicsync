@@ -49,7 +49,7 @@ public class SpotifyRecordingHandler {
         File dir = new File(path);
         File[] files = dir.listFiles((directory, dirFile) -> StringUtils.equals(dirFile, filename));
 
-        if (files != null && files.length == 0) {
+        if (files != null && files.length == 1) {
             try {
                 AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(files[0]);
                 if (fileFormat instanceof TAudioFileFormat) {
@@ -82,8 +82,10 @@ public class SpotifyRecordingHandler {
                 files[0].delete();
                 return false;
             }
+            log.info("File is okay");
+            return true;
         }
-        log.info("File is okay");
-        return true;
+        log.info("File doesn't exists");
+        return false;
     }
 }
