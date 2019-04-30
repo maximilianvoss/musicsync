@@ -133,12 +133,15 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
             String arg = args[i];
             if (StringUtils.equals(arg, "--toniebox-username")) {
                 username = args[++i];
+                log.debug("--toniebox-username: " + username);
             } else if (StringUtils.equals(arg, "--toniebox-password")) {
                 password = args[++i];
+                log.debug("--toniebox-password: " + password);
             }
         }
         tonieHandler.login(username, password);
         households = tonieHandler.getHouseholds();
+        log.debug("Parsing arguments is okay");
         return true;
     }
 

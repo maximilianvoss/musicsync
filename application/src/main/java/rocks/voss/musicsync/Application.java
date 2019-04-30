@@ -38,6 +38,7 @@ public class Application {
         PluginLoader.registerConnections(connections);
 
         if (isDaemon) {
+            log.debug("Starting in daemon mode");
             while (true) {
                 try {
                     sync(connections);
@@ -49,6 +50,7 @@ public class Application {
                 }
             }
         } else {
+            log.debug("Starting in single mode");
             sync(connections);
         }
     }
@@ -106,10 +108,13 @@ public class Application {
         }
 
         if (isDaemon && StringUtils.isBlank(argInputUri) && StringUtils.isBlank(argOutputUri)) {
+            log.debug("Daemon parameters okay");
             return true;
         } else if (!isDaemon && StringUtils.isNotBlank(argInputUri) && StringUtils.isNotBlank(argOutputUri)) {
+            log.debug("No Daemon parameters okay");
             return true;
         } else {
+            log.debug("Application parameter not okay");
             return false;
         }
     }

@@ -28,20 +28,23 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (StringUtils.equals(arg, "--spotify-apicode") && args.length == 1) {
-                log.trace("--spotify-apicode");
+                log.debug("--spotify-apicode");
                 SpotifyAuthenticationSetup.getSignInUrl(spotifyHandler);
                 return true;
             } else if (StringUtils.equals(arg, "--spotify-code") && args.length == 2) {
                 String code = args[++i];
-                log.trace("--spotify-code: " + code);
+                log.debug("--spotify-code: " + code);
                 SpotifyAuthenticationSetup.getAccessToken(spotifyHandler, code);
                 return true;
             } else if (StringUtils.equals(arg, "--spotify-apicode") && args.length != 1) {
+                log.debug("--spotify-apicode has wrong argument count");
                 return false;
             } else if (StringUtils.equals(arg, "--spotify-code") && args.length != 2) {
+                log.debug("--spotify-code has wrong argument count");
                 return false;
             }
         }
+        log.debug("Parsing arguments is okay");
         return true;
     }
 
