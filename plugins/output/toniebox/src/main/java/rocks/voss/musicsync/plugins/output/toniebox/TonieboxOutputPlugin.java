@@ -122,6 +122,11 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     }
 
     @Override
+    public void establishConnection() {
+        openConnection();
+    }
+
+    @Override
     public void init(Properties properties) {
         username = properties.getProperty("toniebox.username");
         password = properties.getProperty("toniebox.password");
@@ -160,7 +165,6 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     }
 
     private CreativeTonie getCreativeTonie(SyncConnection syncConnection) {
-        openConnection();
         if (!tonieCache.containsKey(syncConnection)) {
             log.debug("creative tonie not in cache");
             try {

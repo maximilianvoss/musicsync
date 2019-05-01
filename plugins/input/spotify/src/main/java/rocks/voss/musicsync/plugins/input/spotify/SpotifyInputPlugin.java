@@ -16,7 +16,18 @@ import java.util.Properties;
 
 public class SpotifyInputPlugin implements SyncInputPlugin {
     final private Logger log = Logger.getLogger(this.getClass().getName());
-    SpotifyHandler spotifyHandler;
+    private SpotifyHandler spotifyHandler;
+
+    @Override
+    public void establishConnection() {
+        try {
+            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
+        } catch (IOException e) {
+            log.error("IOException", e);
+        } catch (SpotifyWebApiException e) {
+            log.error("SpotifyWebApiException", e);
+        }
+    }
 
     @Override
     public void init(Properties properties) {
@@ -58,7 +69,6 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     public List<SyncTrack> getTracklist(SyncConnection connection) {
         List<SyncTrack> tracks = new ArrayList<>();
         try {
-            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
             List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(spotifyHandler);
             for (PlaylistSimplified playlist : playlists) {
                 log.trace("Playlist id: " + playlist.getUri());
