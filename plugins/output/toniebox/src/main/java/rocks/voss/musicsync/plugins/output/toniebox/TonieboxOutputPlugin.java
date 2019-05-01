@@ -122,13 +122,13 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     }
 
     @Override
-    public void init(Properties properties) throws Exception {
+    public void init(Properties properties) {
         username = properties.getProperty("toniebox.username");
         password = properties.getProperty("toniebox.password");
     }
 
     @Override
-    public boolean parseArguments(String[] args) throws Exception {
+    public boolean parseArguments(String[] args) {
         for (int i = 0; i < args.length; i++) {
             String arg = args[i];
             if (StringUtils.equals(arg, "--toniebox-username")) {
@@ -139,8 +139,6 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                 log.debug("--toniebox-password: " + password);
             }
         }
-        tonieHandler.login(username, password);
-        households = tonieHandler.getHouseholds();
         log.debug("Parsing arguments is okay");
         return true;
     }
@@ -150,7 +148,19 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
         return "toniebox";
     }
 
+    private void openConnection() {
+        try {
+            tonieHandler.login(username, password);
+            households = tonieHandler.getHouseholds();
+        } catch (IOException e) {
+            log.error("IOException while login", e);
+            households = new ArrayList<>(0);
+            tonieCache.clear();
+        }
+    }
+
     private CreativeTonie getCreativeTonie(SyncConnection syncConnection) {
+        openConnection();
         if (!tonieCache.containsKey(syncConnection)) {
             log.debug("creative tonie not in cache");
             try {
