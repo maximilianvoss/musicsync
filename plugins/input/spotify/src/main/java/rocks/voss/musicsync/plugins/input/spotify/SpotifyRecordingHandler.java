@@ -15,11 +15,15 @@ import java.util.Map;
 public class SpotifyRecordingHandler {
     final private static Logger log = Logger.getLogger(SpotifyRecordingHandler.class.getName());
 
-    public static void recordTrack(SpotifyHandler spotifyHandler, PlaylistTrack track, String filename)
+    public static void recordTrack(SpotifyHandler spotifyHandler, PlaylistTrack track, String filePath)
             throws IOException, InterruptedException {
         new File(spotifyHandler.getCachePath()).mkdirs();
 
-        filename = filename.replace("//", "/");
+        filePath = filePath.replace("//", "/");
+        String filename = StringUtils.replace(filePath, spotifyHandler.getCachePath(), "");
+        if (StringUtils.startsWith(filename, "/")) {
+            filename = StringUtils.substring(filename, 1);
+        }
 
         if (isFileValid(track, spotifyHandler.getCachePath(), filename)) {
             log.debug("File is valid: " + filename);
@@ -47,12 +51,8 @@ public class SpotifyRecordingHandler {
         log.debug("Execution done");
     }
 
-    private static boolean isFileValid(PlaylistTrack track, String path, String filePath) {
-        String tmp = StringUtils.replace(filePath, path, "");
-        if (StringUtils.startsWith(tmp, "/")) {
-            tmp = StringUtils.substring(tmp, 1);
-        }
-        final String filename = tmp;
+    private static boolean isFileValid(PlaylistTrack track, String path, String filename) {
+        log.debug("Checking: " + filename);
 
         File dir = new File(path);
         File[] files = dir.listFiles((directory, dirFile) -> StringUtils.equals(dirFile, filename));
