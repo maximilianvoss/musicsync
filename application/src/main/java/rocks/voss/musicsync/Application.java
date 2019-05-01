@@ -60,6 +60,9 @@ public class Application {
             SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
             SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
 
+            inputPlugin.establishConnection();
+            outputPlugin.establishConnection();
+
             List<SyncTrack> tracks = inputPlugin.getTracklist(connection);
             List<SyncTrack> tracksToSync = new ArrayList<>();
             for (SyncTrack track : tracks) {
