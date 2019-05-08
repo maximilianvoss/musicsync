@@ -16,5 +16,6 @@
 
     <modules>
         <module>toniebox</module>
+        <module>filesystem</module>
     </modules>
 </project>

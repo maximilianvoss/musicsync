@@ -46,8 +46,7 @@ public class SpotifyRecordingHandler {
 
         String[] commands = {"/bin/bash", "-c", command.toString()};
         log.debug("Executing: " + command.toString());
-        Process proc = rt.exec(commands);
-        proc.waitFor();
+        rt.exec(commands).waitFor();
         log.debug("Execution done");
     }
 
