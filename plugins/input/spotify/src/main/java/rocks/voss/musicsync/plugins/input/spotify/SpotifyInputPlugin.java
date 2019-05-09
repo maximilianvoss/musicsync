@@ -67,18 +67,19 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
 
     @Override
     public List<SyncTrack> getTracklist(SyncConnection connection) {
-        List<SyncTrack> tracks = new ArrayList<>();
+        List<SyncTrack> syncTracks = new ArrayList<>();
         try {
             List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(spotifyHandler);
             for (PlaylistSimplified playlist : playlists) {
                 log.trace("Playlist id: " + playlist.getUri());
                 if (StringUtils.equals(playlist.getUri(), connection.getInputUri())) {
                     log.trace("Playlist match: " + connection.getInputUri());
-                    List<PlaylistTrack> trackList = PlaylistHandler.getTracks(spotifyHandler, playlist);
-                    for ( PlaylistTrack track : trackList ){
-                        tracks.add(SpotifySyncTrackImpl.createBy(spotifyHandler, track));
+                    List<PlaylistTrack> tracks = PlaylistHandler.getTracks(spotifyHandler, playlist);
+                    for (int i = 0; i < tracks.size(); i++) {
+                        PlaylistTrack track = tracks.get(i);
+                        syncTracks.add(SpotifySyncTrackImpl.createBy(spotifyHandler, track, i));
                     }
-                    return tracks;
+                    return syncTracks;
                 }
             }
         } catch (IOException e) {
@@ -86,7 +87,7 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
         } catch (SpotifyWebApiException e) {
             log.error("SpotifyWebApiException", e);
         }
-        return tracks;
+        return syncTracks;
     }
 
     @Override

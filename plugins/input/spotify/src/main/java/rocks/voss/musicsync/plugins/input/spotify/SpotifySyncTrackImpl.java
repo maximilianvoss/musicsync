@@ -20,7 +20,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
     private Object originalTrack;
     private String cacheLocation;
 
-    public static SyncTrack createBy(SpotifyHandler spotifyHandler, PlaylistTrack track) {
+    public static SyncTrack createBy(SpotifyHandler spotifyHandler, PlaylistTrack track, int order) {
         SpotifySyncTrackImpl syncTrack = new SpotifySyncTrackImpl();
 
         List<String> artists = new ArrayList<>();
@@ -33,7 +33,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
         syncTrack.setArtists(artists.toArray(new String[]{}));
         syncTrack.setName(track.getTrack().getName());
         syncTrack.setDiscNumber(track.getTrack().getDiscNumber());
-        syncTrack.setTrackNumber(track.getTrack().getTrackNumber());
+        syncTrack.setTrackNumber(order);
         syncTrack.setAlbumName(track.getTrack().getAlbum().getName());
         syncTrack.setOriginalTrack(track);
         syncTrack.setCacheLocation(spotifyHandler.getCachePath() + "/" + track.getTrack().getId() + ".mp3");
