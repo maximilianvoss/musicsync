@@ -1,7 +1,7 @@
 package rocks.voss.musicsync;
 
+import lombok.Getter;
 import org.reflections.Reflections;
-import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.api.SyncPlugin;
@@ -9,13 +9,14 @@ import rocks.voss.musicsync.api.SyncPlugin;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 public class PluginLoader {
+    @Getter
     private static Map<String, SyncInputPlugin> inputPlugins = new HashMap<>();
+    @Getter
     private static Map<String, SyncOutputPlugin> outputPlugins = new HashMap<>();
 
     public static void loadPlugins() throws InstantiationException, IllegalAccessException {
@@ -38,13 +39,6 @@ public class PluginLoader {
             helpMessages.append(outputPlugin.helpScreen());
         }
         return helpMessages.toString();
-    }
-
-    public static void registerConnections(List<SyncConnection> connections) {
-        for (SyncConnection connection : connections) {
-            connection.setSyncInputPlugin(inputPlugins.get(connection.getInputSchema()));
-            connection.setSyncOutputPlugin(outputPlugins.get(connection.getOutputSchema()));
-        }
     }
 
     private static boolean initPlugins(Properties properties, Collection<SyncPlugin> plugins, String[] args) throws Exception {

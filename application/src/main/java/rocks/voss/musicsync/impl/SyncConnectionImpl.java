@@ -2,6 +2,7 @@ package rocks.voss.musicsync.impl;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import rocks.voss.musicsync.PluginLoader;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
@@ -10,8 +11,8 @@ import rocks.voss.musicsync.api.SyncOutputPlugin;
 public class SyncConnectionImpl implements SyncConnection {
     private String inputUri;
     private String outputUri;
-    private SyncInputPlugin syncInputPlugin;
-    private SyncOutputPlugin syncOutputPlugin;
+    private SyncInputPlugin syncInputPlugin = null;
+    private SyncOutputPlugin syncOutputPlugin = null;
 
     public static SyncConnectionImpl createByUris(String inputUri, String outputUri) {
         SyncConnectionImpl syncConnectionImpl = new SyncConnectionImpl();
@@ -30,4 +31,17 @@ public class SyncConnectionImpl implements SyncConnection {
         return StringUtils.substring(outputUri, 0,StringUtils.indexOf(outputUri, ":"));
     }
 
+    public SyncInputPlugin getSyncInputPlugin() {
+        if (this.syncInputPlugin == null) {
+            this.syncInputPlugin = PluginLoader.getInputPlugins().get(getInputSchema());
+        }
+        return this.syncInputPlugin;
+    }
+
+    public SyncOutputPlugin getSyncOutputPlugin() {
+        if (this.syncOutputPlugin == null) {
+            this.syncOutputPlugin = PluginLoader.getOutputPlugins().get(getOutputSchema());
+        }
+        return this.syncOutputPlugin;
+    }
 }

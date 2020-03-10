@@ -35,8 +35,6 @@ public class Application {
         }
 
         connections = getConnections(properties);
-        PluginLoader.registerConnections(connections);
-
         if (isDaemon) {
             log.debug("Starting in daemon mode");
             while (true) {
@@ -71,9 +69,13 @@ public class Application {
                 }
             }
             inputPlugin.downloadTracks(connection, tracksToSync);
+
             outputPlugin.cleanUpTracks(connection, tracks);
             outputPlugin.uploadTracks(connection, tracksToSync);
             outputPlugin.orderTracks(connection, tracks);
+
+            inputPlugin.closeConnection();
+            outputPlugin.closeConnection();
         }
     }
 

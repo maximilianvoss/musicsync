@@ -79,7 +79,7 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
                         PlaylistTrack track = tracks.get(i);
                         syncTracks.add(SpotifySyncTrackImpl.createBy(spotifyHandler, track, i));
                     }
-                    return syncTracks;
+                    break;
                 }
             }
         } catch (IOException e) {
@@ -106,5 +106,10 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     @Override
     public String getSchema() {
         return "spotify";
+    }
+
+    @Override
+    public void closeConnection() {
+        return;
     }
 }

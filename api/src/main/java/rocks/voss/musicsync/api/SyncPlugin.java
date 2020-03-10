@@ -10,4 +10,6 @@ public interface SyncPlugin {
     boolean parseArguments(String[] args) throws Exception;
 
     String getSchema();
+
+    void closeConnection();
 }

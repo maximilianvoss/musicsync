@@ -117,6 +117,11 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
         return "filesystem";
     }
 
+    @Override
+    public void closeConnection() {
+        return;
+    }
+
     private String getFilename(SyncTrack syncTrack) {
         String name = StringUtils.substring("00" + syncTrack.getTrackNumber(), 0, 3);
         name = name + "-" + syncTrack.getArtists()[0] + "-" + syncTrack.getName();

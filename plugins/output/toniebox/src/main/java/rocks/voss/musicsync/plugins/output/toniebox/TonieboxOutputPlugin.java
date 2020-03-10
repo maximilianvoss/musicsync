@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class TonieboxOutputPlugin implements SyncOutputPlugin {
     final private Logger log = Logger.getLogger(this.getClass().getName());
     private List<Household> households;
-    private TonieHandler tonieHandler = new TonieHandler();
+    private TonieHandler tonieHandler;
     private Map<SyncConnection, CreativeTonie> tonieCache = new HashMap<>();
     private String username;
     private String password;
@@ -153,8 +153,22 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
         return "toniebox";
     }
 
+    @Override
+    public void closeConnection() {
+        try {
+            tonieHandler.disconnect();
+        } catch (IOException e) {
+            log.error("IOException while closing Connection", e);
+        }
+        ;
+        tonieHandler = null;
+    }
+
     private void openConnection() {
         try {
+            if (tonieHandler == null) {
+                tonieHandler = new TonieHandler();
+            }
             tonieHandler.login(username, password);
             households = tonieHandler.getHouseholds();
         } catch (IOException e) {

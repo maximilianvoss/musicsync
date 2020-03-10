@@ -14,6 +14,6 @@ public class TonieboxConnection {
         String pairs[] = StringUtils.split(connection.getOutputUri(), ':');
         tonieboxConnection.setHouseholdId(pairs[1]);
         tonieboxConnection.setCreativeTonieId(pairs[2]);
-        return  tonieboxConnection;
+        return tonieboxConnection;
     }
 }
