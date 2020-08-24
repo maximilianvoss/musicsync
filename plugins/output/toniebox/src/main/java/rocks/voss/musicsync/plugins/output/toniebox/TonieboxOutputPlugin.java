@@ -205,7 +205,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     }
 
     private String getTrackTitle(SyncTrack syncTrack) {
-        return syncTrack.getId() + " - " + syncTrack.getArtists()[0] + " - " + syncTrack.getName();
+        return StringUtils.left(syncTrack.getId() + " - " + syncTrack.getArtists()[0] + " - " + syncTrack.getName(), 128);
     }
 
     private boolean isChapterToBeRemoved(List<SyncTrack> syncTracks, Chapter chapter) {
