@@ -238,6 +238,10 @@ class Application {
         trackTitle = StringUtils.replace(trackTitle, "%d", String.valueOf(track.getTrack().getDiscNumber()));
         trackTitle = StringUtils.replace(trackTitle, "%t", String.valueOf(track.getTrack().getTrackNumber()));
 
+        /*The maximum chapter length is 128 characters. Note that this might result in the unlikely failure
+        to delete the track automatically if the second "-" character is cut away.*/
+        trackTitle = StringUtils.left(trackTitle, 128);
+
         log.debug(trackTitle);
         return trackTitle;
     }
