@@ -5,7 +5,8 @@ After a while we found many wonderful stories for kids on Spotify [2] and we won
 
 In the end, this handy tool was created to sync music between different services.
 
-**Remark: To use this tool you must have a Spotify premium abo!**   
+**Remark: To use this tool you must have a Spotify premium abo!**     
+**Remark: Only JDK 8 is supported**
 
 **My special thanks to:** 
 * Geert Vandeweyer for stream_recorder.pl [3]
