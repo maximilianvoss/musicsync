@@ -118,6 +118,9 @@ public class Application {
         } else if (!isDaemon && StringUtils.isNotEmpty(argInputUri) && StringUtils.isNotEmpty(argOutputUri)) {
             log.debug("No Daemon parameters okay");
             return true;
+        } else if (!isDaemon && StringUtils.isEmpty(argInputUri) && StringUtils.isEmpty(argOutputUri)) {
+            log.debug("No input and output specified. Parameters will be passed to plugin parsers.");
+            return true;
         } else {
             log.debug("Application parameter not okay");
             return false;
