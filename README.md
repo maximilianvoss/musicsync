@@ -25,6 +25,9 @@ mvn clean install
 ```
 The end result will be packaged in package/target/output. 
 
+### Docker Build
+`docker build . -t [IMAGE-TAG]`
+
 ## Execution
 Run it as a daemon
 ```bash
@@ -35,6 +38,10 @@ Run it for a single time
 ```bash
 ./musicsync --input [INPUT-URI] --output [OUTPUT-URI]
 ```
+
+### Docker execution for a single time
+`docker run [IMAGE-TAG] [ARGUMENTS]`
+where _ARGUMENTS_ is e.g. `--input [INPUT-URI] --output [OUTPUT-URI]`
 
 *Note: Parameters may change with the available plugins. Each plugin defines additional parameters if applicable.*
 
