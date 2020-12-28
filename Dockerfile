@@ -21,5 +21,9 @@ WORKDIR /bin/spotify-toniebox-sync
 
 # mark script as executable
 RUN ["chmod", "+x", "musicsync"]
+RUN ["touch", "musicsync.log"]
+RUN ["chown", "-R", "nobody:", "/bin/spotify-toniebox-sync"]
+RUN ["chmod", "-R",  "u+w", "/bin/spotify-toniebox-sync"]
 
+USER nobody
 ENTRYPOINT ["sh", "musicsync"]
