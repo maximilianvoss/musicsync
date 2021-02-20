@@ -55,27 +55,35 @@ public class Application {
 
     private static void sync(List<SyncConnection> connections) {
         for (SyncConnection connection : connections) {
-            SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
-            SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
+            try {
+                SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
+                SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
 
-            inputPlugin.establishConnection();
-            outputPlugin.establishConnection();
-
-            List<SyncTrack> tracks = inputPlugin.getTracklist(connection);
-            List<SyncTrack> tracksToSync = new ArrayList<>();
-            for (SyncTrack track : tracks) {
-                if (!outputPlugin.isTrackUploaded(connection, track)) {
-                    tracksToSync.add(track);
+                if (inputPlugin == null || outputPlugin == null) {
+                    log.error("One is null\nInputPlugin: " + inputPlugin + ", outputPlugin: " + outputPlugin);
                 }
+
+                inputPlugin.establishConnection();
+                outputPlugin.establishConnection();
+
+                List<SyncTrack> tracks = inputPlugin.getTracklist(connection);
+                List<SyncTrack> tracksToSync = new ArrayList<>();
+                for (SyncTrack track : tracks) {
+                    if (!outputPlugin.isTrackUploaded(connection, track)) {
+                        tracksToSync.add(track);
+                    }
+                }
+                inputPlugin.downloadTracks(connection, tracksToSync);
+
+                outputPlugin.cleanUpTracks(connection, tracks);
+                outputPlugin.uploadTracks(connection, tracksToSync);
+                outputPlugin.orderTracks(connection, tracks);
+
+                inputPlugin.closeConnection();
+                outputPlugin.closeConnection();
+            } catch (Exception e) {
+                log.error("Exception", e);
             }
-            inputPlugin.downloadTracks(connection, tracksToSync);
-
-            outputPlugin.cleanUpTracks(connection, tracks);
-            outputPlugin.uploadTracks(connection, tracksToSync);
-            outputPlugin.orderTracks(connection, tracks);
-
-            inputPlugin.closeConnection();
-            outputPlugin.closeConnection();
         }
     }
 

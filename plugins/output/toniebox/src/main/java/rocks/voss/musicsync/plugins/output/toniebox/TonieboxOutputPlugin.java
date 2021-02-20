@@ -36,7 +36,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
         try {
             CreativeTonie creativeTonie = getCreativeTonie(connection);
             if (creativeTonie == null) {
-                log.debug("CreativeTonie not found");
+                log.error("CreativeTonie not found");
                 return;
             }
             for (SyncTrack syncTrack : syncTracks) {
@@ -65,6 +65,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
         } catch (Exception e) {
             log.error("Exception", e);
         }
+        log.debug("Track not found: " + getTrackTitle(syncTrack));
         return false;
     }
 
