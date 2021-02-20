@@ -76,23 +76,23 @@ public class SpotifyRecordingHandler {
                         return false;
                     }
                 } else {
-                    log.info("File is not okay");
+                    log.info("File is not okay: " + files[0].getAbsolutePath());
                     files[0].delete();
                     return false;
                 }
             } catch (IOException e) {
-                log.error("IOException", e);
+                log.error("IOException in file: " + files[0].getAbsolutePath(), e);
                 files[0].delete();
                 return false;
             } catch (UnsupportedAudioFileException e) {
-                log.error("UnsupportedAudioFileException", e);
+                log.error("UnsupportedAudioFileException in file: " + files[0].getAbsolutePath(), e);
                 files[0].delete();
                 return false;
             }
-            log.info("File is okay");
+            log.info("File is okay: " + files[0].getAbsolutePath());
             return true;
         }
-        log.info("File doesn't exists");
+        log.info("File doesn't exists: " + files[0].getAbsolutePath());
         return false;
     }
 }
