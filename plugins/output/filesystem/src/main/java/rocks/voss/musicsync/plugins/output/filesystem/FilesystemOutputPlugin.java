@@ -7,7 +7,6 @@ import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.api.SyncTrack;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
@@ -22,45 +21,48 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public void uploadTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
-        String outputPath = getOutputPath(connection);
+        try {
+            String outputPath = getOutputPath(connection);
 
-        for (SyncTrack syncTrack : syncTracks) {
-            log.info("Copying: " + getFilename(syncTrack));
-            Runtime rt = Runtime.getRuntime();
-            StringBuilder command = new StringBuilder();
-            command.append("cp ")
-                    .append("\"")
-                    .append(syncTrack.getCacheLocation())
-                    .append("\" \"")
-                    .append(outputPath)
-                    .append("/")
-                    .append(getFilename(syncTrack))
-                    .append("\"");
+            for (SyncTrack syncTrack : syncTracks) {
+                log.info("Copying: " + getFilename(syncTrack));
+                Runtime rt = Runtime.getRuntime();
+                StringBuilder command = new StringBuilder();
+                command.append("cp ")
+                        .append("\"")
+                        .append(syncTrack.getCacheLocation())
+                        .append("\" \"")
+                        .append(outputPath)
+                        .append("/")
+                        .append(getFilename(syncTrack))
+                        .append("\"");
 
-            String[] commands = {"/bin/bash", "-c", command.toString()};
-            log.debug("Executing: " + command.toString());
-            try {
+                String[] commands = {"/bin/bash", "-c", command.toString()};
+                log.debug("Executing: " + command.toString());
+
                 rt.exec(commands).waitFor();
-            } catch (IOException e) {
-                log.error("IOException", e);
-            } catch (InterruptedException e) {
-                log.error("InterruptedException", e);
+                log.debug("Execution done");
             }
-            log.debug("Execution done");
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
-
     }
 
     @Override
     public boolean isTrackUploaded(SyncConnection connection, SyncTrack syncTrack) {
-        String outputPath = getOutputPath(connection);
+        try {
+            String outputPath = getOutputPath(connection);
 
-        File dir = new File(outputPath);
-        File[] files = dir.listFiles((directory, dirFile) -> StringUtils.endsWith(dirFile, getFilename(syncTrack)));
-        if (files != null && files.length > 0) {
-            return true;
+            File dir = new File(outputPath);
+            File[] files = dir.listFiles((directory, dirFile) -> StringUtils.endsWith(dirFile, getFilename(syncTrack)));
+            if (files != null && files.length > 0) {
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            log.error("Exception", e);
+            return false;
         }
-        return false;
     }
 
     @Override
@@ -70,22 +72,26 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public void cleanUpTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
-        String outputPath = getOutputPath(connection);
+        try {
+            String outputPath = getOutputPath(connection);
 
-        File dir = new File(outputPath);
-        File[] files = dir.listFiles((directory, dirFile) -> {
-            for (SyncTrack syncTrack : syncTracks) {
-                if (StringUtils.equals(dirFile, getFilename(syncTrack))) {
-                    return false;
+            File dir = new File(outputPath);
+            File[] files = dir.listFiles((directory, dirFile) -> {
+                for (SyncTrack syncTrack : syncTracks) {
+                    if (StringUtils.equals(dirFile, getFilename(syncTrack))) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            if (files != null) {
+                for (File file : files) {
+                    file.delete();
                 }
             }
-            return true;
-        });
-
-        if (files != null) {
-            for (File file : files) {
-                file.delete();
-            }
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
     }
 

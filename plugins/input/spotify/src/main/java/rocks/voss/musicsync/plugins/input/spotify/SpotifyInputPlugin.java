@@ -82,10 +82,8 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
                     break;
                 }
             }
-        } catch (IOException e) {
-            log.error("IOException", e);
-        } catch (SpotifyWebApiException e) {
-            log.error("SpotifyWebApiException", e);
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
         return syncTracks;
     }
@@ -95,10 +93,8 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
         for ( SyncTrack track : syncTracks) {
             try {
                 SpotifyRecordingHandler.recordTrack(spotifyHandler, (PlaylistTrack) track.getOriginalTrack(), track.getCacheLocation());
-            } catch (IOException e) {
-                log.error("IOException", e);
-            } catch (InterruptedException e) {
-                log.error("InterruptedException", e);
+            } catch (Exception e) {
+                log.error("Exception", e);
             }
         }
     }

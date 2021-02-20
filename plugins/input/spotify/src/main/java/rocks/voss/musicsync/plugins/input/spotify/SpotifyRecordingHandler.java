@@ -25,7 +25,7 @@ public class SpotifyRecordingHandler {
             filename = StringUtils.substring(filename, 1);
         }
 
-        if (isFileValid(track, spotifyHandler.getCachePath(), filename)) {
+        if (isFileValid(spotifyHandler, track, spotifyHandler.getCachePath(), filename)) {
             log.debug("File is valid: " + filename);
         } else {
             log.debug("File is not valid: " + filename);
@@ -50,7 +50,7 @@ public class SpotifyRecordingHandler {
         log.debug("Execution done");
     }
 
-    private static boolean isFileValid(PlaylistTrack track, String path, String filename) {
+    private static boolean isFileValid(SpotifyHandler spotifyHandler, PlaylistTrack track, String path, String filename) {
         log.debug("Checking: " + filename);
 
         File dir = new File(path);
@@ -70,7 +70,7 @@ public class SpotifyRecordingHandler {
                     log.debug("Track duration: " + track.getTrack().getDurationMs());
                     log.debug("Delta duration: " + delta);
 
-                    if (delta > 1000 || delta < -1000) {
+                    if (delta > spotifyHandler.getTrackThreshold() || delta < -spotifyHandler.getTrackThreshold()) {
                         log.info("Delta is too big");
                         files[0].delete();
                         return false;

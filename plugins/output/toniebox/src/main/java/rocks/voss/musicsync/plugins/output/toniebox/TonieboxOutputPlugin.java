@@ -10,7 +10,6 @@ import rocks.voss.toniebox.beans.toniebox.Chapter;
 import rocks.voss.toniebox.beans.toniebox.CreativeTonie;
 import rocks.voss.toniebox.beans.toniebox.Household;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,33 +33,37 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public void uploadTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
-        CreativeTonie creativeTonie = getCreativeTonie(connection);
-        if (creativeTonie == null) {
-            log.debug("CreativeTonie not found");
-            return;
-        }
         try {
+            CreativeTonie creativeTonie = getCreativeTonie(connection);
+            if (creativeTonie == null) {
+                log.debug("CreativeTonie not found");
+                return;
+            }
             for (SyncTrack syncTrack : syncTracks) {
                 creativeTonie.uploadFile(getTrackTitle(syncTrack), syncTrack.getCacheLocation());
             }
             creativeTonie.commit();
-        } catch (IOException e) {
-            log.error("IOException", e);
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
     }
 
     @Override
     public boolean isTrackUploaded(SyncConnection connection, SyncTrack syncTrack) {
-        CreativeTonie creativeTonie = getCreativeTonie(connection);
-        if (creativeTonie == null) {
-            log.debug("CreativeTonie not found");
-            return false;
-        }
-        for (Chapter chapter : creativeTonie.getChapters()) {
-            if (StringUtils.equals(chapter.getTitle(), getTrackTitle(syncTrack))) {
-                log.debug("Track found: " + chapter.getTitle());
-                return true;
+        try {
+            CreativeTonie creativeTonie = getCreativeTonie(connection);
+            if (creativeTonie == null) {
+                log.debug("CreativeTonie not found");
+                return false;
             }
+            for (Chapter chapter : creativeTonie.getChapters()) {
+                if (StringUtils.equals(chapter.getTitle(), getTrackTitle(syncTrack))) {
+                    log.debug("Track found: " + chapter.getTitle());
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
         return false;
     }
@@ -91,20 +94,20 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
 
             creativeTonie.setChapters(sortedChapters.toArray(new Chapter[]{}));
             creativeTonie.commit();
-        } catch (IOException e) {
-            log.error("IOException", e);
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
     }
 
     @Override
     public void cleanUpTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
-        CreativeTonie creativeTonie = getCreativeTonie(connection);
-        if (creativeTonie == null) {
-            log.debug("CreativeTonie not found");
-            return;
-        }
-
         try {
+            CreativeTonie creativeTonie = getCreativeTonie(connection);
+            if (creativeTonie == null) {
+                log.debug("CreativeTonie not found");
+                return;
+            }
+
             List<Chapter> newChapters = new ArrayList<>(creativeTonie.getChapters().length);
             for (Chapter chapter : creativeTonie.getChapters()) {
                 log.debug("Chapter: " + chapter.getTitle());
@@ -116,8 +119,8 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
 
             creativeTonie.setChapters(newChapters.toArray(new Chapter[]{}));
             creativeTonie.commit();
-        } catch (IOException e) {
-            log.error("IOException", e);
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
     }
 
@@ -157,10 +160,9 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     public void closeConnection() {
         try {
             tonieHandler.disconnect();
-        } catch (IOException e) {
-            log.error("IOException while closing Connection", e);
+        } catch (Exception e) {
+            log.error("Exception while closing Connection", e);
         }
-        ;
         tonieHandler = null;
     }
 
@@ -171,8 +173,8 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
             }
             tonieHandler.login(username, password);
             households = tonieHandler.getHouseholds();
-        } catch (IOException e) {
-            log.error("IOException while login", e);
+        } catch (Exception e) {
+            log.error("Exception while login", e);
             households = new ArrayList<>(0);
             tonieCache.clear();
         }
@@ -197,8 +199,8 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                         return null;
                     }
                 }
-            } catch (IOException e) {
-                log.error("IOException", e);
+            } catch (Exception e) {
+                log.error("Exception", e);
             }
         }
         return tonieCache.get(syncConnection);

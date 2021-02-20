@@ -44,7 +44,7 @@ public class Application {
                     Thread.sleep(60000);
                     log.debug("Up again");
                 } catch (Exception e) {
-                    log.error("Exception", e);
+                    log.error("Exception");
                 }
             }
         } else {

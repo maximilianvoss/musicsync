@@ -19,6 +19,7 @@ public class SpotifyHandler {
     private String accessToken;
     private String refreshToken;
     private String cachePath;
+    private int trackThreshold = 1000;
 
     public static SpotifyHandler createHandlerByProperties(Properties properties) {
         SpotifyHandler spotifyHandler = new SpotifyHandler();
@@ -27,6 +28,10 @@ public class SpotifyHandler {
         spotifyHandler.setRedirectUri(SpotifyHttpManager.makeUri(properties.getProperty("spotify.redirectUri")));
         spotifyHandler.setRefreshToken(properties.getProperty("spotify.refreshToken"));
         spotifyHandler.setCachePath(properties.getProperty("spotify.cachePath"));
+        String trackThreshold = properties.getProperty("spotify.trackThreshold");
+        if (trackThreshold != null) {
+            spotifyHandler.setTrackThreshold(Integer.valueOf(trackThreshold));
+        }
         return spotifyHandler;
     }
 
