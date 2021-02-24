@@ -55,6 +55,7 @@ public class Application {
 
     private static void sync(List<SyncConnection> connections) {
         for (SyncConnection connection : connections) {
+            log.debug("Syncing " + connection.getInputUri() + " to " + connection.getOutputUri());
             try {
                 SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
                 SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
