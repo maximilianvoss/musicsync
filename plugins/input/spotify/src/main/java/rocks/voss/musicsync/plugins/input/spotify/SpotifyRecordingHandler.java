@@ -89,10 +89,10 @@ public class SpotifyRecordingHandler {
                 files[0].delete();
                 return false;
             }
-            log.info("File is okay: " + files[0].getAbsolutePath());
+            log.info("File is okay: " + filename);
             return true;
         }
-        log.info("File doesn't exists: " + files[0].getAbsolutePath());
+        log.info("File doesn't exists: " + filename);
         return false;
     }
 }
