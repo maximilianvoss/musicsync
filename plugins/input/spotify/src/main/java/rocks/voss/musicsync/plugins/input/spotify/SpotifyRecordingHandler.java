@@ -25,7 +25,9 @@ public class SpotifyRecordingHandler {
             filename = StringUtils.substring(filename, 1);
         }
 
-        if (isFileValid(spotifyHandler, track, spotifyHandler.getCachePath(), filename)) {
+        if (!track.getTrack().getIsPlayable()) {
+            log.debug("Track is not available on Spotify");
+        } else if (isFileValid(spotifyHandler, track, spotifyHandler.getCachePath(), filename)) {
             log.debug("File is valid: " + filename);
         } else {
             log.debug("File is not valid: " + filename);
