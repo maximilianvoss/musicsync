@@ -1,7 +1,9 @@
 package rocks.voss.musicsync;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
@@ -19,6 +21,7 @@ import java.util.Properties;
 public class Application {
     final private static Logger log = Logger.getLogger(Application.class.getName());
     final private static String PROPERTIES_FILE = "musicsync.properties";
+    final private static String LOG4J_PROPERTIES_FILE = "log4j.properties";
 
     private static List<SyncConnection> connections;
     private static Properties properties;
@@ -27,7 +30,8 @@ public class Application {
     private static String argOutputUri = null;
 
     public static void main(String[] args) throws Exception {
-        properties = getProperties();
+        properties = getProperties("./" + PROPERTIES_FILE, PROPERTIES_FILE);
+        updateLoggerConfig();
         PluginLoader.loadPlugins();
 
         if (!parseArguments(args) || !PluginLoader.initPlugins(properties, args)) {
@@ -142,13 +146,13 @@ public class Application {
         System.out.println(help);
     }
 
-    private static Properties getProperties() throws IOException {
+    private static Properties getProperties(String file, String resourcePath) throws IOException {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         InputStream stream;
-        if (new File("./" + PROPERTIES_FILE).exists()) {
-            stream = new FileInputStream("./" + PROPERTIES_FILE);
+        if (new File(file).exists()) {
+            stream = new FileInputStream(file);
         } else {
-            stream = loader.getResourceAsStream(PROPERTIES_FILE);
+            stream = loader.getResourceAsStream(resourcePath);
         }
         Properties properties = new Properties();
         properties.load(stream);
@@ -156,5 +160,11 @@ public class Application {
             stream.close();
         }
         return properties;
+    }
+
+    private static void updateLoggerConfig() throws IOException {
+        Properties props = getProperties("./" + LOG4J_PROPERTIES_FILE, LOG4J_PROPERTIES_FILE);
+        LogManager.resetConfiguration();
+        PropertyConfigurator.configure(props);
     }
 }
