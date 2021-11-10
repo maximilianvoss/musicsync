@@ -1,13 +1,14 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
-import com.wrapper.spotify.exceptions.SpotifyWebApiException;
-import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
-import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hc.core5.http.ParseException;
 import org.apache.log4j.Logger;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncTrack;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +27,8 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
             log.error("IOException", e);
         } catch (SpotifyWebApiException e) {
             log.error("SpotifyWebApiException", e);
+        } catch (ParseException e) {
+            log.error("ParseException", e);
         }
     }
 

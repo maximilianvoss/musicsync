@@ -1,10 +1,10 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
-import com.wrapper.spotify.SpotifyApi;
-import com.wrapper.spotify.SpotifyHttpManager;
-import com.wrapper.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
+import se.michaelthelin.spotify.SpotifyApi;
+import se.michaelthelin.spotify.SpotifyHttpManager;
+import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRequest;
 
 import java.net.URI;
 import java.util.Properties;

@@ -1,11 +1,12 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
-import com.wrapper.spotify.exceptions.SpotifyWebApiException;
-import com.wrapper.spotify.model_objects.specification.Paging;
-import com.wrapper.spotify.model_objects.specification.PlaylistSimplified;
-import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
-import com.wrapper.spotify.requests.data.playlists.GetListOfCurrentUsersPlaylistsRequest;
-import com.wrapper.spotify.requests.data.playlists.GetPlaylistsTracksRequest;
+import org.apache.hc.core5.http.ParseException;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.specification.Paging;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
+import se.michaelthelin.spotify.requests.data.playlists.GetListOfCurrentUsersPlaylistsRequest;
+import se.michaelthelin.spotify.requests.data.playlists.GetPlaylistsItemsRequest;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.List;
 
 public class PlaylistHandler {
     public static List<PlaylistSimplified> getPlaylists(SpotifyHandler spotifyHandler)
-            throws IOException, SpotifyWebApiException {
+            throws IOException, SpotifyWebApiException, ParseException {
         int offset = 0;
         int limit = 10;
         List<PlaylistSimplified> playlists = new ArrayList<>();
@@ -34,19 +35,14 @@ public class PlaylistHandler {
     }
 
     public static List<PlaylistTrack> getTracks(SpotifyHandler spotifyHandler, PlaylistSimplified playlist)
-            throws IOException, SpotifyWebApiException {
+            throws IOException, SpotifyWebApiException, ParseException {
         int offset = 0;
         int limit = 10;
         List<PlaylistTrack> tracks = new ArrayList<>();
         Paging<PlaylistTrack> playlistTrackPaging;
         do {
-            GetPlaylistsTracksRequest getPlaylistsTracksRequest = spotifyHandler.getSpotifyApi()
-                    .getPlaylistsTracks(playlist.getId())
-                    .limit(limit)
-                    .offset(offset)
-                    .build();
-
-            playlistTrackPaging = getPlaylistsTracksRequest.execute();
+            GetPlaylistsItemsRequest getPlaylistsItemsRequest = spotifyHandler.getSpotifyApi().getPlaylistsItems(playlist.getId()).build();
+            playlistTrackPaging = getPlaylistsItemsRequest.execute();
             tracks.addAll(Arrays.asList(playlistTrackPaging.getItems()));
             offset += limit;
         } while (offset < playlistTrackPaging.getTotal());

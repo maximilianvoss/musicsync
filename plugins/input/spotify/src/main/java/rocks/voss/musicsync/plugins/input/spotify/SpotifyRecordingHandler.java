@@ -1,9 +1,9 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
-import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.tritonus.share.sampled.file.TAudioFileFormat;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 
 import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioSystem;
@@ -25,7 +25,7 @@ public class SpotifyRecordingHandler {
             filename = StringUtils.substring(filename, 1);
         }
 
-        if (!track.getTrack().getIsPlayable()) {
+        if (track.getTrack() == null) {
             log.debug("Track is not available on Spotify");
         } else if (isFileValid(spotifyHandler, track, spotifyHandler.getCachePath(), filename)) {
             log.debug("File is valid: " + filename);

@@ -1,10 +1,15 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
-import com.wrapper.spotify.model_objects.specification.ArtistSimplified;
-import com.wrapper.spotify.model_objects.specification.PlaylistTrack;
 import lombok.Data;
+import org.apache.hc.core5.http.ParseException;
 import rocks.voss.musicsync.api.SyncTrack;
+import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
+import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
+import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
+import se.michaelthelin.spotify.model_objects.specification.Track;
+import se.michaelthelin.spotify.requests.data.tracks.GetTrackRequest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,25 +25,27 @@ public class SpotifySyncTrackImpl implements SyncTrack {
     private Object originalTrack;
     private String cacheLocation;
 
-    public static SyncTrack createBy(SpotifyHandler spotifyHandler, PlaylistTrack track, int order) {
+    public static SyncTrack createBy(SpotifyHandler spotifyHandler, PlaylistTrack playlistTrack, int order) throws IOException, ParseException, SpotifyWebApiException {
         SpotifySyncTrackImpl syncTrack = new SpotifySyncTrackImpl();
 
+        GetTrackRequest getTrackRequest = spotifyHandler.getSpotifyApi().getTrack(playlistTrack.getTrack().getId()).build();
+        final Track track = getTrackRequest.execute();
+
         List<String> artists = new ArrayList<>();
-        for (ArtistSimplified artist : track.getTrack().getArtists()) {
+        for (ArtistSimplified artist : track.getArtists()) {
             artists.add(artist.getName());
         }
 
-        syncTrack.setId(track.getTrack().getId());
-        syncTrack.setUri(track.getTrack().getUri());
+        syncTrack.setId(playlistTrack.getTrack().getId());
+        syncTrack.setUri(playlistTrack.getTrack().getUri());
         syncTrack.setArtists(artists.toArray(new String[]{}));
-        syncTrack.setName(track.getTrack().getName());
-        syncTrack.setDiscNumber(track.getTrack().getDiscNumber());
+        syncTrack.setName(playlistTrack.getTrack().getName());
+        syncTrack.setDiscNumber(track.getDiscNumber());
         syncTrack.setTrackNumber(order);
-        syncTrack.setAlbumName(track.getTrack().getAlbum().getName());
-        syncTrack.setOriginalTrack(track);
-        syncTrack.setCacheLocation(spotifyHandler.getCachePath() + "/" + track.getTrack().getId() + ".mp3");
+        syncTrack.setAlbumName(track.getAlbum().getName());
+        syncTrack.setOriginalTrack(playlistTrack);
+        syncTrack.setCacheLocation(spotifyHandler.getCachePath() + "/" + playlistTrack.getTrack().getId() + ".mp3");
 
         return syncTrack;
-
     }
 }
