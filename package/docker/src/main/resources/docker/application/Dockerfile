@@ -3,6 +3,7 @@ FROM maximilianvoss/musicsyncbase
 # Latest Git Code
 RUN git clone https://github.com/maximilianvoss/musicsync.git musicsync-git
 RUN (cd musicsync-git; git pull; git checkout develop; mvn clean install)
+RUN mkdir /musicsync
 RUN mv /musicsync-git/application/target/* /musicsync/
 
 # tidy up
