@@ -1,4 +1,4 @@
-FROM maximilianvoss/musicsycbase
+FROM maximilianvoss/musicsyncbase
 
 # Latest Git Code
 RUN git clone https://github.com/maximilianvoss/musicsync.git musicsync-git
