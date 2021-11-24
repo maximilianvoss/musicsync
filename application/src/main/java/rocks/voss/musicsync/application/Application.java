@@ -1,4 +1,4 @@
-package rocks.voss.musicsync;
+package rocks.voss.musicsync.application;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.LogManager;
@@ -8,7 +8,7 @@ import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.api.SyncTrack;
-import rocks.voss.musicsync.impl.SyncConnectionImpl;
+import rocks.voss.musicsync.application.impl.SyncConnectionImpl;
 
 import java.io.File;
 import java.io.FileInputStream;

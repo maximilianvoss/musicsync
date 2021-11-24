@@ -2,15 +2,10 @@ package rocks.voss.musicsync.plugins.input.spotify;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.tritonus.share.sampled.file.TAudioFileFormat;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 
-import javax.sound.sampled.AudioFileFormat;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 public class SpotifyRecordingHandler {
     final private static Logger log = Logger.getLogger(SpotifyRecordingHandler.class.getName());
@@ -55,46 +50,46 @@ public class SpotifyRecordingHandler {
     private static boolean isFileValid(SpotifyHandler spotifyHandler, PlaylistTrack track, String path, String filename) {
         log.debug("Checking: " + filename);
 
-        File dir = new File(path);
-        File[] files = dir.listFiles((directory, dirFile) -> StringUtils.equals(dirFile, filename));
-
-        if (files != null && files.length == 1) {
-            try {
-                AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(files[0]);
-                if (fileFormat instanceof TAudioFileFormat) {
-                    Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
-                    String key = "duration";
-                    Long microseconds = (Long) properties.get(key);
-                    int mili = (int) (microseconds / 1000);
-                    int delta = mili - track.getTrack().getDurationMs();
-
-                    log.debug("MP3 duration  : " + mili);
-                    log.debug("Track duration: " + track.getTrack().getDurationMs());
-                    log.debug("Delta duration: " + delta);
-
-                    if (delta > spotifyHandler.getTrackThreshold() || delta < -spotifyHandler.getTrackThreshold()) {
-                        log.info("Delta is too big");
-                        files[0].delete();
-                        return false;
-                    }
-                } else {
-                    log.info("File is not okay: " + files[0].getAbsolutePath());
-                    files[0].delete();
-                    return false;
-                }
-            } catch (IOException e) {
-                log.error("IOException in file: " + files[0].getAbsolutePath(), e);
-                files[0].delete();
-                return false;
-            } catch (UnsupportedAudioFileException e) {
-                log.error("UnsupportedAudioFileException in file: " + files[0].getAbsolutePath(), e);
-                files[0].delete();
-                return false;
-            }
-            log.info("File is okay: " + filename);
-            return true;
-        }
-        log.info("File doesn't exists: " + filename);
+//        File dir = new File(path);
+//        File[] files = dir.listFiles((directory, dirFile) -> StringUtils.equals(dirFile, filename));
+//
+//        if (files != null && files.length == 1) {
+//            try {
+//                AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(files[0]);
+//                if (fileFormat instanceof TAudioFileFormat) {
+//                    Map<?, ?> properties = ((TAudioFileFormat) fileFormat).properties();
+//                    String key = "duration";
+//                    Long microseconds = (Long) properties.get(key);
+//                    int mili = (int) (microseconds / 1000);
+//                    int delta = mili - track.getTrack().getDurationMs();
+//
+//                    log.debug("MP3 duration  : " + mili);
+//                    log.debug("Track duration: " + track.getTrack().getDurationMs());
+//                    log.debug("Delta duration: " + delta);
+//
+//                    if (delta > spotifyHandler.getTrackThreshold() || delta < -spotifyHandler.getTrackThreshold()) {
+//                        log.info("Delta is too big");
+//                        files[0].delete();
+//                        return false;
+//                    }
+//                } else {
+//                    log.info("File is not okay: " + files[0].getAbsolutePath());
+//                    files[0].delete();
+//                    return false;
+//                }
+//            } catch (IOException e) {
+//                log.error("IOException in file: " + files[0].getAbsolutePath(), e);
+//                files[0].delete();
+//                return false;
+//            } catch (UnsupportedAudioFileException e) {
+//                log.error("UnsupportedAudioFileException in file: " + files[0].getAbsolutePath(), e);
+//                files[0].delete();
+//                return false;
+//            }
+//            log.info("File is okay: " + filename);
+//            return true;
+//        }
+//        log.info("File doesn't exists: " + filename);
         return false;
     }
 }

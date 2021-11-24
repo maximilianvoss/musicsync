@@ -1,4 +1,4 @@
-package rocks.voss.musicsync;
+package rocks.voss.musicsync.application;
 
 import lombok.Getter;
 import org.reflections.Reflections;
@@ -60,7 +60,7 @@ public class PluginLoader {
     }
 
     private static <T> void loadPlugins(Map<String, T> map, Class<T> clazz) throws IllegalAccessException, InstantiationException {
-        Reflections reflections = new Reflections("");
+        Reflections reflections = new Reflections("rocks.voss.musicsync.plugins");
         Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(clazz);
         Iterator<Class<? extends T>> iterator = subTypes.iterator();
         while (iterator.hasNext()) {

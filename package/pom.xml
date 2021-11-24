@@ -42,84 +42,23 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <version>3.1.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>exec-maven-plugin</artifactId>
-                    <version>1.6.0</version>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.6.0</version>
                 <executions>
                     <execution>
-                        <id>Fetch Music Sync Dependencies</id>
-                        <phase>generate-sources</phase>
+                        <id>Build Package</id>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy</goal>
+                            <goal>exec</goal>
                         </goals>
                         <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>rocks.voss</groupId>
-                                    <artifactId>musicsync-application</artifactId>
-                                    <type>jar</type>
-                                    <outputDirectory>target/output</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>rocks.voss</groupId>
-                                    <artifactId>musicsync-plugins-output-toniebox</artifactId>
-                                    <type>jar</type>
-                                    <outputDirectory>target/output</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>rocks.voss</groupId>
-                                    <artifactId>musicsync-plugins-output-filesystem</artifactId>
-                                    <type>jar</type>
-                                    <outputDirectory>target/output</outputDirectory>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>rocks.voss</groupId>
-                                    <artifactId>musicsync-plugins-input-spotify</artifactId>
-                                    <type>jar</type>
-                                    <outputDirectory>target/output</outputDirectory>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <groupId>org.apache.maven.plugins</groupId>
-                <executions>
-                    <execution>
-                        <phase>compile</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/output</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>${project.basedir}/src/main/resources</directory>
-                                </resource>
-                            </resources>
+                            <executable>${project.basedir}/src/main/resources/build_package.sh</executable>
+                            <arguments>
+                                <argument>${project.basedir}</argument>
+                            </arguments>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,11 +1,11 @@
-package rocks.voss.musicsync.impl;
+package rocks.voss.musicsync.application.impl;
 
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import rocks.voss.musicsync.PluginLoader;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
+import rocks.voss.musicsync.application.PluginLoader;
 
 @Data
 public class SyncConnectionImpl implements SyncConnection {
