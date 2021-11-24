@@ -11,9 +11,7 @@ open module rocks.voss.musicsync.plugins.input.spotify {
     requires static org.apache.httpcomponents.client5.httpclient5.cache;
     requires static org.apache.httpcomponents.client5.httpclient5;
     requires static org.apache.httpcomponents.core5.httpcore5;
-
-//    requires org.tritonus.sampled.file;
-//    requires javax.sound.sampled;
+    requires static java.desktop;
 
     uses rocks.voss.musicsync.api.SyncInputPlugin;
     uses rocks.voss.musicsync.api.SyncTrack;

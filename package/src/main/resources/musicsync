@@ -1,11 +1,8 @@
 #!/bin/bash
 
-classpath=$(find . -name '*.jar' | awk '{ printf("%s:", $1); } END { printf("%s", $1); }')
+execdir=.
+
+classpath=$(find $execdir -name '*.jar' | awk '{ printf("%s:", $1); } END { printf("%s", $1); }')
 executable='rocks.voss.musicsync.application/rocks.voss.musicsync.application.Application'
 
-echo $classpath
-echo $executable
-
-java -classpath $classpath --module-path .:libs -m $executable  $@
-
-#java -agentlib:jdwp=transport=dt_socket,server=y,suspend=y,address=*:5005 -classpath $classpath --module-path .:libs --add-modules rocks.voss.musicsync.plugins.input.spotify -m $executable  $@
+java -classpath $classpath -p $execdir:$execdir/modules -m $executable  $@

@@ -7,7 +7,7 @@
     <parent>
         <groupId>rocks.voss</groupId>
         <artifactId>musicsync</artifactId>
-        <version>2.0-SNAPSHOT</version>
+        <version>3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>musicsync-plugins</artifactId>
@@ -18,7 +18,7 @@
         <dependency>
             <groupId>rocks.voss</groupId>
             <artifactId>musicsync-api</artifactId>
-            <version>2.0-SNAPSHOT</version>
+            <version>3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
