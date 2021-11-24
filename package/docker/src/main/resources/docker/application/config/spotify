@@ -1,0 +1,1 @@
+SPOTIFY_OPTIONS="--username=<YOUR USERNAME> --password=<YOUR PASSWORD>"; export SPOTIFY_OPTIONS

@@ -95,10 +95,27 @@
         </pluginManagement>
     </build>
 
-    <modules>
-        <module>api</module>
-        <module>application</module>
-        <module>plugins</module>
-        <module>package</module>
-    </modules>
+    <profiles>
+        <profile>
+            <id>application</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>api</module>
+                <module>application</module>
+                <module>plugins</module>
+                <module>package</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>package</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>

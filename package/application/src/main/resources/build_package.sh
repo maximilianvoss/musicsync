@@ -1,7 +1,8 @@
 #!/bin/bash
 
 target="$1/target"
-source="$1/.."
+source="$1/../.."
+resources="$1/src/main/resources"
 
 libs="$target/libs"
 modules="$target/modules"
@@ -19,6 +20,13 @@ find $libs \
     -o -name '*reflections*' -exec mv {} $modules \; \
     -o -name '*log4j*' -exec mv {} $modules \;
 
-cp $1/src/main/resources/musicsync $target
+cp $resources/musicsync $target
 chmod +x $target/musicsync
+
+cp $resources/sp $target
+chmod +x $target/sp
+
+cp $resources/stream_recorder.pl $target
+chmod +x $target/stream_recorder.pl
+
 

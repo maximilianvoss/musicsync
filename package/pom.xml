@@ -14,55 +14,21 @@
     <name>Music Sync Package</name>
     <packaging>pom</packaging>
 
-    <dependencies>
-        <dependency>
-            <groupId>rocks.voss</groupId>
-            <artifactId>musicsync-application</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>rocks.voss</groupId>
-            <artifactId>musicsync-plugins-output-toniebox</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>rocks.voss</groupId>
-            <artifactId>musicsync-plugins-output-filesystem</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
-            <groupId>rocks.voss</groupId>
-            <artifactId>musicsync-plugins-input-spotify</artifactId>
-            <version>3.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
-    </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.6.0</version>
-                <executions>
-                    <execution>
-                        <id>Build Package</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                        <configuration>
-                            <executable>${project.basedir}/src/main/resources/build_package.sh</executable>
-                            <arguments>
-                                <argument>${project.basedir}</argument>
-                            </arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>application</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>application</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <modules>
+                <module>docker</module>
+            </modules>
+        </profile>
+    </profiles>
 </project>
