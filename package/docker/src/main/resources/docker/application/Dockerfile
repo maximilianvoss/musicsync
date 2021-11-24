@@ -4,10 +4,12 @@ FROM maximilianvoss/musicsyncbase
 RUN git clone https://github.com/maximilianvoss/musicsync.git musicsync-git
 RUN (cd musicsync-git; git pull; git checkout develop; mvn clean install)
 RUN mkdir /musicsync
-RUN mv /musicsync-git/application/target/* /musicsync/
+RUN mv /musicsync-git/package/application/target/* /musicsync/
+RUN ln -s /musicsync/cp /usr/local/bin/
+RUN ln -s /musicsync/stream_recorder.pl /usr/local/bin/
 
 # tidy up
-#RUN rm -rf /musicsync
+RUN rm -rf /musicsync-git
 
 # Setup config
 RUN ln -s /config/musicsync.properties /musicsync/
