@@ -12,8 +12,8 @@ RUN ln -s /musicsync/stream_recorder.pl /usr/local/bin/
 RUN rm -rf /musicsync-git
 
 # Setup config
-RUN ln -s /config/musicsync.properties /musicsync/
-RUN ln -s /config/log4j.properties /musicsync/
+RUN ln -s /config/musicsync.json /musicsync/
+RUN ln -s /config/log4j2.xml /musicsync/
 RUN mkdir /musicsync/cache
 
 ENTRYPOINT bash /config/start.sh

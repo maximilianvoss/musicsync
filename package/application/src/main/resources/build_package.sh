@@ -37,5 +37,3 @@ chmod +x $target/sp
 cp $resources/stream_recorder.pl $target
 chmod +x $target/stream_recorder.pl
 
-cp $resources/musicsyncjson $target
-
