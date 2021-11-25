@@ -2,7 +2,8 @@ open module rocks.voss.musicsync.plugins.input.spotify {
     requires rocks.voss.musicsync.api;
     requires lombok;
     requires org.apache.commons.lang3;
-    requires log4j;
+    requires org.apache.logging.log4j;
+    requires rocks.voss.jsonhelper;
 
     requires static se.michaelthelin.spotify;
     requires static com.fasterxml.jackson.databind;
@@ -18,4 +19,5 @@ open module rocks.voss.musicsync.plugins.input.spotify {
     uses rocks.voss.musicsync.api.SyncConnection;
 
     exports rocks.voss.musicsync.plugins.input.spotify;
+    exports rocks.voss.musicsync.plugins.input.spotify.config;
 }

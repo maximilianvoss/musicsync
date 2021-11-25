@@ -1,16 +1,18 @@
 package rocks.voss.musicsync.application;
 
 import lombok.Getter;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.api.SyncPlugin;
+import rocks.voss.musicsync.application.config.Configuration;
+import rocks.voss.musicsync.application.config.PluginConfiguration;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 public class PluginLoader {
@@ -24,9 +26,9 @@ public class PluginLoader {
         loadOutputPlugins();
     }
 
-    public static boolean initPlugins(Properties properties, String[] args) throws Exception {
-        return PluginLoader.initPlugins(properties, (Collection<SyncPlugin>) (Collection<?>) inputPlugins.values(), args)
-                && PluginLoader.initPlugins(properties, (Collection<SyncPlugin>) (Collection<?>) outputPlugins.values(), args);
+    public static boolean initPlugins(Configuration config, String[] args) throws Exception {
+        return PluginLoader.initPlugins(config, (Collection<SyncPlugin>) (Collection<?>) inputPlugins.values(), args)
+                && PluginLoader.initPlugins(config, (Collection<SyncPlugin>) (Collection<?>) outputPlugins.values(), args);
     }
 
     public static String getHelpMessages(StringBuilder helpMessages) {
@@ -41,9 +43,16 @@ public class PluginLoader {
         return helpMessages.toString();
     }
 
-    private static boolean initPlugins(Properties properties, Collection<SyncPlugin> plugins, String[] args) throws Exception {
+    private static boolean initPlugins(Configuration config, Collection<SyncPlugin> plugins, String[] args) throws Exception {
         for (SyncPlugin plugin : plugins) {
-            plugin.init(properties);
+
+            for (PluginConfiguration pluginConfig : config.getPlugins()) {
+                if (StringUtils.equals(pluginConfig.getPlugin(), plugin.getSchema())) {
+                    plugin.init(pluginConfig.getConfig());
+                    break;
+                }
+            }
+
             if (!plugin.parseArguments(args)) {
                 return false;
             }

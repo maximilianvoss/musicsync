@@ -1,34 +1,39 @@
 package rocks.voss.musicsync.application.impl;
 
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import lombok.Getter;
+import lombok.Setter;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.application.PluginLoader;
+import rocks.voss.musicsync.application.config.ConnectionEndpoint;
 
-@Data
+@Getter
 public class SyncConnectionImpl implements SyncConnection {
-    private String inputUri;
-    private String outputUri;
     private SyncInputPlugin syncInputPlugin = null;
     private SyncOutputPlugin syncOutputPlugin = null;
 
-    public static SyncConnectionImpl createByUris(String inputUri, String outputUri) {
-        SyncConnectionImpl syncConnectionImpl = new SyncConnectionImpl();
-        syncConnectionImpl.setInputUri(inputUri);
-        syncConnectionImpl.setOutputUri(outputUri);
-        return syncConnectionImpl;
+    @Setter
+    private ConnectionEndpoint in;
+    @Setter
+    private ConnectionEndpoint out;
+
+    public static SyncConnection createBy(ConnectionEndpoint in, ConnectionEndpoint out) {
+        SyncConnectionImpl connection = new SyncConnectionImpl();
+        connection.setIn(in);
+        connection.setOut(out);
+
+        return connection;
     }
 
     @Override
     public String getInputSchema() {
-        return StringUtils.substring(inputUri, 0,StringUtils.indexOf(inputUri, ":"));
+        return in.getPlugin();
     }
 
     @Override
     public String getOutputSchema() {
-        return StringUtils.substring(outputUri, 0,StringUtils.indexOf(outputUri, ":"));
+        return out.getPlugin();
     }
 
     public SyncInputPlugin getSyncInputPlugin() {
@@ -38,10 +43,20 @@ public class SyncConnectionImpl implements SyncConnection {
         return this.syncInputPlugin;
     }
 
+    @Override
+    public Object getInputConfig() {
+        return in.getConfig();
+    }
+
     public SyncOutputPlugin getSyncOutputPlugin() {
         if (this.syncOutputPlugin == null) {
             this.syncOutputPlugin = PluginLoader.getOutputPlugins().get(getOutputSchema());
         }
         return this.syncOutputPlugin;
+    }
+
+    @Override
+    public Object getOutputConfig() {
+        return out.getConfig();
     }
 }

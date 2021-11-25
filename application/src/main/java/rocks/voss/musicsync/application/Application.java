@@ -1,65 +1,58 @@
 package rocks.voss.musicsync.application;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import rocks.voss.jsonhelper.JSONHelper;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.api.SyncTrack;
+import rocks.voss.musicsync.application.config.Configuration;
+import rocks.voss.musicsync.application.config.SyncConfiguration;
 import rocks.voss.musicsync.application.impl.SyncConnectionImpl;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class Application {
-    final private static Logger log = Logger.getLogger(Application.class.getName());
-    final private static String PROPERTIES_FILE = "musicsync.properties";
-    final private static String LOG4J_PROPERTIES_FILE = "log4j.properties";
-
+    final private static Logger log = LogManager.getLogger(Application.class);
     private static List<SyncConnection> connections;
-    private static Properties properties;
-    private static boolean isDaemon = false;
-    private static String argInputUri = null;
-    private static String argOutputUri = null;
 
     public static void main(String[] args) throws Exception {
-        properties = getProperties("./" + PROPERTIES_FILE, PROPERTIES_FILE);
-        updateLoggerConfig();
-        PluginLoader.loadPlugins();
+        File file = new File("log4j2.xml");
+        if (file != null) {
+            LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
+            context.setConfigLocation(file.toURI());
+        }
 
-        if (!parseArguments(args) || !PluginLoader.initPlugins(properties, args)) {
+        InputStream jsonStream = new FileInputStream("musicsync.json");
+        Configuration config = JSONHelper.createBean(Configuration.class, jsonStream);
+
+        PluginLoader.loadPlugins();
+        if (!PluginLoader.initPlugins(config, args)) {
             printHelp();
         }
 
-        connections = getConnections(properties);
-        if (isDaemon) {
-            log.debug("Starting in daemon mode");
-            while (true) {
-                try {
-                    sync(connections);
-                    log.debug("Taking a nap");
-                    Thread.sleep(60000);
-                    log.debug("Up again");
-                } catch (Exception e) {
-                    log.error("Exception");
-                }
+        connections = getConnections(config);
+        log.debug("Starting in daemon mode");
+        while (true) {
+            try {
+                sync(connections);
+                log.debug("Taking a nap");
+                Thread.sleep(config.getGeneral().getTimeout() * 1000);
+                log.debug("Up again");
+            } catch (Exception e) {
+                log.error("Exception");
             }
-        } else {
-            log.debug("Starting in single mode");
-            sync(connections);
         }
     }
 
     private static void sync(List<SyncConnection> connections) {
         for (SyncConnection connection : connections) {
-            log.debug("Syncing " + connection.getInputUri() + " to " + connection.getOutputUri());
             try {
                 SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
                 SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
@@ -92,79 +85,17 @@ public class Application {
         }
     }
 
-    private static List<SyncConnection> getConnections(Properties properties) {
+    private static List<SyncConnection> getConnections(Configuration config) {
         List<SyncConnection> connections = new ArrayList<>();
-        if (isDaemon) {
-            String mapping;
-            int i = 0;
-            do {
-                mapping = properties.getProperty("mapping[" + i + "]");
-                log.debug("Mapping from file: " + mapping);
-                if (mapping != null) {
-                    String[] pairs = mapping.split(";");
-                    connections.add(SyncConnectionImpl.createByUris(pairs[0], pairs[1]));
-                }
-                i++;
-            } while (mapping != null);
-        }
-        if (StringUtils.isNotBlank(argInputUri) && StringUtils.isNotBlank(argOutputUri)) {
-            connections.add(SyncConnectionImpl.createByUris(argInputUri, argOutputUri));
+        for (SyncConfiguration connectionWrapperBean : config.getConnections()) {
+            connections.add(SyncConnectionImpl.createBy(connectionWrapperBean.getIn(), connectionWrapperBean.getOut()));
         }
         return connections;
     }
 
-    private static boolean parseArguments(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (StringUtils.equals(arg, "--daemon")) {
-                isDaemon = true;
-            } else if (StringUtils.equals(arg, "--input")) {
-                argInputUri = args[++i];
-            } else if (StringUtils.equals(arg, "--output")) {
-                argOutputUri = args[++i];
-            }
-        }
-
-        if (isDaemon && StringUtils.isEmpty(argInputUri) && StringUtils.isEmpty(argOutputUri)) {
-            log.debug("Daemon parameters okay");
-            return true;
-        } else if (!isDaemon && StringUtils.isNotEmpty(argInputUri) && StringUtils.isNotEmpty(argOutputUri)) {
-            log.debug("No Daemon parameters okay");
-            return true;
-        } else {
-            log.debug("Application parameter not okay");
-            return false;
-        }
-    }
-
     private static void printHelp() {
-        StringBuilder help = new StringBuilder("Usage: spotify-toniebox-sync.jar [--daemon | --input INPUT --output OUTPUT]\n");
-        help.append("--daemon\n\t\tRun in daemon mode to sync periodically all lists in the properties file\n");
-        help.append("--input INPUT\n\t\tDefine an input source for a one-time run\n");
-        help.append("--output OUTPUT\n\t\tDefine an output destination for a one-time run\n");
+        StringBuilder help = new StringBuilder("Usage: spotify-toniebox-sync.jar\n");
         PluginLoader.getHelpMessages(help);
         System.out.println(help);
-    }
-
-    private static Properties getProperties(String file, String resourcePath) throws IOException {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        InputStream stream;
-        if (new File(file).exists()) {
-            stream = new FileInputStream(file);
-        } else {
-            stream = loader.getResourceAsStream(resourcePath);
-        }
-        Properties properties = new Properties();
-        properties.load(stream);
-        if (stream != null) {
-            stream.close();
-        }
-        return properties;
-    }
-
-    private static void updateLoggerConfig() throws IOException {
-        Properties props = getProperties("./" + LOG4J_PROPERTIES_FILE, LOG4J_PROPERTIES_FILE);
-        LogManager.resetConfiguration();
-        PropertyConfigurator.configure(props);
     }
 }

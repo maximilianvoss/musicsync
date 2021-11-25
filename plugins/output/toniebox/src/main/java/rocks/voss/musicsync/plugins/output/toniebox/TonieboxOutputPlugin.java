@@ -1,24 +1,28 @@
 package rocks.voss.musicsync.plugins.output.toniebox;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import rocks.voss.jsonhelper.JSONHelper;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.api.SyncTrack;
+import rocks.voss.musicsync.plugins.output.toniebox.config.PluginConfiguration;
 import rocks.voss.toniebox.TonieHandler;
 import rocks.voss.toniebox.beans.toniebox.Chapter;
 import rocks.voss.toniebox.beans.toniebox.CreativeTonie;
 import rocks.voss.toniebox.beans.toniebox.Household;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.regex.Pattern;
 
 public class TonieboxOutputPlugin implements SyncOutputPlugin {
-    final private Logger log = Logger.getLogger(this.getClass().getName());
+    final private static Logger log = LogManager.getLogger(TonieboxOutputPlugin.class);
+
     private List<Household> households;
     private TonieHandler tonieHandler;
     private Map<SyncConnection, CreativeTonie> tonieCache = new HashMap<>();
@@ -131,9 +135,14 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     }
 
     @Override
-    public void init(Properties properties) {
-        username = properties.getProperty("toniebox.username");
-        password = properties.getProperty("toniebox.password");
+    public void init(Object configuration) {
+        try {
+            PluginConfiguration pluginConfiguration = JSONHelper.createBean(PluginConfiguration.class, configuration);
+            username = pluginConfiguration.getUsername();
+            password = pluginConfiguration.getPassword();
+        } catch (IOException e) {
+            log.error(e);
+        }
     }
 
     @Override

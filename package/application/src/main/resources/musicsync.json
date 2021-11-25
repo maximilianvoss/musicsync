@@ -1,0 +1,61 @@
+{
+  "general": {
+    "timeout": 60
+  },
+  "plugins": [
+    {
+      "plugin": "spotify",
+      "config": {
+        "clientId": "<CLIENT ID>>",
+        "clientSecret": "<CLIENT SECRET>",
+        "redirectUri": "<REDIRECT URL>",
+        "refreshToken": "<REFRESH TOKEN>>",
+        "cachePath": "<CACHE PATH>"
+      }
+    },
+    {
+      "plugin": "toniebox",
+      "config": {
+        "username": "<TONIE USER>",
+        "password": "<TONIE PASSWORD>"
+      }
+    },
+    {
+      "plugin": "filesystem",
+      "config": {
+        "directory": "<DEFAULT FOLDER>"
+      }
+    }
+  ],
+  "connections": [
+    {
+      "in": {
+        "plugin": "spotify",
+        "config": {
+          "uri": "playlist:<PLAYLIST>"
+        }
+      },
+      "out": {
+        "plugin": "toniebox",
+        "config": {
+          "household": "<HOUSEHOLD>",
+          "tonie": "<CREATIVE TONIE ID>"
+        }
+      }
+    },
+    {
+      "in": {
+        "plugin": "spotify",
+        "config": {
+          "uri": "playlist:<PLAYLIST>"
+        }
+      },
+      "out": {
+        "plugin": "filesystem",
+        "config": {
+          "directory": "<FOLDER>>"
+        }
+      }
+    }
+  ]
+}

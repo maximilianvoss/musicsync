@@ -1,17 +1,21 @@
 package rocks.voss.musicsync.plugins.output.filesystem;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import rocks.voss.jsonhelper.JSONHelper;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncOutputPlugin;
 import rocks.voss.musicsync.api.SyncTrack;
+import rocks.voss.musicsync.plugins.output.filesystem.config.PluginConfiguration;
+import rocks.voss.musicsync.plugins.output.filesystem.config.SyncConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.Properties;
 
 public class FilesystemOutputPlugin implements SyncOutputPlugin {
-    final private Logger log = Logger.getLogger(this.getClass().getName());
+    final private static Logger log = LogManager.getLogger(FilesystemOutputPlugin.class);
     private String directory;
 
     @Override
@@ -101,8 +105,9 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
     }
 
     @Override
-    public void init(Properties properties) throws Exception {
-        directory = properties.getProperty("filesystem.directory");
+    public void init(Object configuration) throws Exception {
+        PluginConfiguration pluginConfiguration = JSONHelper.createBean(PluginConfiguration.class, configuration);
+        directory = pluginConfiguration.getDirectory();
     }
 
     @Override
@@ -135,12 +140,14 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
     }
 
     private String getOutputPath(SyncConnection connection) {
-        String pairs[] = StringUtils.split(connection.getOutputUri(), ":");
-        pairs[1] = StringUtils.trim(pairs[1]);
-        if (StringUtils.isEmpty(pairs[1])) {
-            return directory;
-        } else {
-            return pairs[1];
+        try {
+            SyncConfiguration syncConfiguration = JSONHelper.createBean(SyncConfiguration.class, connection.getOutputConfig());
+            if (syncConfiguration.getDirectory() != null) {
+                return syncConfiguration.getDirectory();
+            }
+        } catch (IOException e) {
+            log.error(e);
         }
+        return directory;
     }
 }

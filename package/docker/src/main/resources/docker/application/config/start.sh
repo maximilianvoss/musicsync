@@ -1,4 +1,4 @@
-#!/bin/bsah
+#!/bin/bash
 #
 
 . /config/spotify

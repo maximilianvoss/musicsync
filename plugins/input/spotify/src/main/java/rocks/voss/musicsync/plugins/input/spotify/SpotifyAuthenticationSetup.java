@@ -1,7 +1,9 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
 import org.apache.hc.core5.http.ParseException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import rocks.voss.musicsync.plugins.input.spotify.config.PluginConfiguration;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.credentials.AuthorizationCodeCredentials;
 import se.michaelthelin.spotify.requests.authorization.authorization_code.AuthorizationCodeRefreshRequest;
@@ -12,9 +14,9 @@ import java.io.IOException;
 import java.net.URI;
 
 public class SpotifyAuthenticationSetup {
-    final private static Logger log = Logger.getLogger(SpotifyAuthenticationSetup.class.getName());
+    final private static Logger log = LogManager.getLogger(SpotifyAuthenticationSetup.class);
 
-    public static void getAccessToken(SpotifyHandler spotifyHandler, String code)
+    public static void getAccessToken(PluginConfiguration spotifyHandler, String code)
             throws IOException, SpotifyWebApiException, ParseException {
         AuthorizationCodeRequest authorizationCodeRequest = spotifyHandler.getSpotifyApi().authorizationCode(code)
                 .build();
@@ -26,7 +28,7 @@ public class SpotifyAuthenticationSetup {
         System.out.println("Refresh Token: " + authorizationCodeCredentials.getRefreshToken());
     }
 
-    public static void getSignInUrl(SpotifyHandler spotifyHandler) {
+    public static void getSignInUrl(PluginConfiguration spotifyHandler) {
         AuthorizationCodeUriRequest authorizationCodeUriRequest = spotifyHandler.getSpotifyApi().authorizationCodeUri()
                 .state("x4xkmn9pu3j6ukrs8n")
                 .scope("playlist-read-private,playlist-read-collaborative,playlist-modify-private,playlist-modify-public")
@@ -38,7 +40,7 @@ public class SpotifyAuthenticationSetup {
     }
 
 
-    public static void refreshToken(SpotifyHandler spotifyHandler)
+    public static void refreshToken(PluginConfiguration spotifyHandler)
             throws IOException, SpotifyWebApiException, ParseException {
         AuthorizationCodeRefreshRequest authorizationCodeRefreshRequest = spotifyHandler.getSpotifyApi().authorizationCodeRefresh().build();
         final AuthorizationCodeCredentials authorizationCodeCredentials = authorizationCodeRefreshRequest.execute();

@@ -1,10 +1,14 @@
 package rocks.voss.musicsync.api;
 
 public interface SyncConnection {
-    String getInputUri();
     String getInputSchema();
     SyncInputPlugin getSyncInputPlugin();
-    String getOutputUri();
+
+    Object getInputConfig();
+
     String getOutputSchema();
+
     SyncOutputPlugin getSyncOutputPlugin();
+
+    Object getOutputConfig();
 }

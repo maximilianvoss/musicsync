@@ -2,10 +2,14 @@ package rocks.voss.musicsync.plugins.input.spotify;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hc.core5.http.ParseException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import rocks.voss.jsonhelper.JSONHelper;
 import rocks.voss.musicsync.api.SyncConnection;
 import rocks.voss.musicsync.api.SyncInputPlugin;
 import rocks.voss.musicsync.api.SyncTrack;
+import rocks.voss.musicsync.plugins.input.spotify.config.PluginConfiguration;
+import rocks.voss.musicsync.plugins.input.spotify.config.SyncConfiguration;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
@@ -13,16 +17,15 @@ import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 public class SpotifyInputPlugin implements SyncInputPlugin {
-    final private Logger log = Logger.getLogger(this.getClass().getName());
-    private SpotifyHandler spotifyHandler;
+    final private static Logger log = LogManager.getLogger(SpotifyInputPlugin.class);
+    private PluginConfiguration pluginConfiguration;
 
     @Override
     public void establishConnection() {
         try {
-            SpotifyAuthenticationSetup.refreshToken(spotifyHandler);
+            SpotifyAuthenticationSetup.refreshToken(pluginConfiguration);
         } catch (IOException e) {
             log.error("IOException", e);
         } catch (SpotifyWebApiException e) {
@@ -33,8 +36,12 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     }
 
     @Override
-    public void init(Properties properties) {
-        spotifyHandler = SpotifyHandler.createHandlerByProperties(properties);
+    public void init(Object configuration) {
+        try {
+            pluginConfiguration = JSONHelper.createBean(PluginConfiguration.class, configuration);
+        } catch (IOException e) {
+            log.error(e);
+        }
     }
 
     @Override
@@ -43,12 +50,12 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
             String arg = args[i];
             if (StringUtils.equals(arg, "--spotify-apicode") && args.length == 1) {
                 log.debug("--spotify-apicode");
-                SpotifyAuthenticationSetup.getSignInUrl(spotifyHandler);
+                SpotifyAuthenticationSetup.getSignInUrl(pluginConfiguration);
                 return true;
             } else if (StringUtils.equals(arg, "--spotify-code") && args.length == 2) {
                 String code = args[++i];
                 log.debug("--spotify-code: " + code);
-                SpotifyAuthenticationSetup.getAccessToken(spotifyHandler, code);
+                SpotifyAuthenticationSetup.getAccessToken(pluginConfiguration, code);
                 return true;
             } else if (StringUtils.equals(arg, "--spotify-apicode") && args.length != 1) {
                 log.debug("--spotify-apicode has wrong argument count");
@@ -71,16 +78,19 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     @Override
     public List<SyncTrack> getTracklist(SyncConnection connection) {
         List<SyncTrack> syncTracks = new ArrayList<>();
+
         try {
-            List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(spotifyHandler);
+            SyncConfiguration syncConfig = JSONHelper.createBean(SyncConfiguration.class, connection.getInputConfig());
+
+            List<PlaylistSimplified> playlists = PlaylistHandler.getPlaylists(pluginConfiguration);
             for (PlaylistSimplified playlist : playlists) {
                 log.trace("Playlist id: " + playlist.getUri());
-                if (StringUtils.equals(playlist.getUri(), connection.getInputUri())) {
-                    log.trace("Playlist match: " + connection.getInputUri());
-                    List<PlaylistTrack> tracks = PlaylistHandler.getTracks(spotifyHandler, playlist);
+                if (StringUtils.equals(playlist.getUri(), syncConfig.getUri())) {
+                    log.trace("Playlist match: " + syncConfig.getUri());
+                    List<PlaylistTrack> tracks = PlaylistHandler.getTracks(pluginConfiguration, playlist);
                     for (int i = 0; i < tracks.size(); i++) {
                         PlaylistTrack track = tracks.get(i);
-                        syncTracks.add(SpotifySyncTrackImpl.createBy(spotifyHandler, track, i));
+                        syncTracks.add(SpotifySyncTrackImpl.createBy(pluginConfiguration, track, i));
                     }
                     break;
                 }
@@ -95,7 +105,7 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     public void downloadTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
         for ( SyncTrack track : syncTracks) {
             try {
-                SpotifyRecordingHandler.recordTrack(spotifyHandler, (PlaylistTrack) track.getOriginalTrack(), track.getCacheLocation());
+                SpotifyRecordingHandler.recordTrack(pluginConfiguration, (PlaylistTrack) track.getOriginalTrack(), track.getCacheLocation());
             } catch (Exception e) {
                 log.error("Exception", e);
             }

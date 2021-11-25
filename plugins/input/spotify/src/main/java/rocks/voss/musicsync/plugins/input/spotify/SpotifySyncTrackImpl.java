@@ -3,6 +3,7 @@ package rocks.voss.musicsync.plugins.input.spotify;
 import lombok.Data;
 import org.apache.hc.core5.http.ParseException;
 import rocks.voss.musicsync.api.SyncTrack;
+import rocks.voss.musicsync.plugins.input.spotify.config.PluginConfiguration;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.ArtistSimplified;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
@@ -25,7 +26,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
     private Object originalTrack;
     private String cacheLocation;
 
-    public static SyncTrack createBy(SpotifyHandler spotifyHandler, PlaylistTrack playlistTrack, int order) throws IOException, ParseException, SpotifyWebApiException {
+    public static SyncTrack createBy(PluginConfiguration spotifyHandler, PlaylistTrack playlistTrack, int order) throws IOException, ParseException, SpotifyWebApiException {
         SpotifySyncTrackImpl syncTrack = new SpotifySyncTrackImpl();
 
         GetTrackRequest getTrackRequest = spotifyHandler.getSpotifyApi().getTrack(playlistTrack.getTrack().getId()).build();

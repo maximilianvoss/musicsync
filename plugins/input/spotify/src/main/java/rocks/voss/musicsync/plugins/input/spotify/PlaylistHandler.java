@@ -1,6 +1,7 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
 import org.apache.hc.core5.http.ParseException;
+import rocks.voss.musicsync.plugins.input.spotify.config.PluginConfiguration;
 import se.michaelthelin.spotify.exceptions.SpotifyWebApiException;
 import se.michaelthelin.spotify.model_objects.specification.Paging;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistSimplified;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PlaylistHandler {
-    public static List<PlaylistSimplified> getPlaylists(SpotifyHandler spotifyHandler)
+    public static List<PlaylistSimplified> getPlaylists(PluginConfiguration spotifyHandler)
             throws IOException, SpotifyWebApiException, ParseException {
         int offset = 0;
         int limit = 10;
@@ -34,7 +35,7 @@ public class PlaylistHandler {
         return playlists;
     }
 
-    public static List<PlaylistTrack> getTracks(SpotifyHandler spotifyHandler, PlaylistSimplified playlist)
+    public static List<PlaylistTrack> getTracks(PluginConfiguration spotifyHandler, PlaylistSimplified playlist)
             throws IOException, SpotifyWebApiException, ParseException {
         int offset = 0;
         int limit = 10;

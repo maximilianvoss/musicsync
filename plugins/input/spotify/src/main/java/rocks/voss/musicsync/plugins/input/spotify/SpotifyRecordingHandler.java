@@ -1,7 +1,9 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import rocks.voss.musicsync.plugins.input.spotify.config.PluginConfiguration;
 import se.michaelthelin.spotify.model_objects.specification.PlaylistTrack;
 
 import javax.sound.sampled.AudioFileFormat;
@@ -12,9 +14,9 @@ import java.io.IOException;
 import java.util.Map;
 
 public class SpotifyRecordingHandler {
-    final private static Logger log = Logger.getLogger(SpotifyRecordingHandler.class.getName());
+    final private static Logger log = LogManager.getLogger(SpotifyRecordingHandler.class);
 
-    public static void recordTrack(SpotifyHandler spotifyHandler, PlaylistTrack track, String filePath)
+    public static void recordTrack(PluginConfiguration spotifyHandler, PlaylistTrack track, String filePath)
             throws IOException, InterruptedException {
         new File(spotifyHandler.getCachePath()).mkdirs();
 
@@ -34,7 +36,7 @@ public class SpotifyRecordingHandler {
         }
     }
 
-    private static void downloadFile(SpotifyHandler spotifyHandler, PlaylistTrack track, String filename) throws InterruptedException, IOException {
+    private static void downloadFile(PluginConfiguration spotifyHandler, PlaylistTrack track, String filename) throws InterruptedException, IOException {
         log.info("Downloading: " + track.getTrack().getUri());
         Runtime rt = Runtime.getRuntime();
         StringBuilder command = new StringBuilder();
@@ -51,7 +53,7 @@ public class SpotifyRecordingHandler {
         log.debug("Execution done");
     }
 
-    private static boolean isFileValid(SpotifyHandler spotifyHandler, PlaylistTrack track, String path, String filename) {
+    private static boolean isFileValid(PluginConfiguration spotifyHandler, PlaylistTrack track, String path, String filename) {
         log.debug("Checking: " + filename);
 
         File dir = new File(path);
