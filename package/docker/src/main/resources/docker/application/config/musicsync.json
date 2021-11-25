@@ -6,11 +6,12 @@
     {
       "plugin": "spotify",
       "config": {
-        "clientId": "<CLIENT ID>>",
+        "clientId": "<CLIENT ID>",
         "clientSecret": "<CLIENT SECRET>",
         "redirectUri": "<REDIRECT URL>",
-        "refreshToken": "<REFRESH TOKEN>>",
-        "cachePath": "<CACHE PATH>"
+        "refreshToken": "<REFRESH TOKEN>",
+        "cachePath": "<CACHE PATH>",
+        "trackThreshold": 2000
       }
     },
     {
@@ -53,7 +54,7 @@
       "out": {
         "plugin": "filesystem",
         "config": {
-          "directory": "<FOLDER>>"
+          "directory": "<FOLDER>"
         }
       }
     }
