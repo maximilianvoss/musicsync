@@ -13,6 +13,7 @@ import rocks.voss.toniebox.beans.toniebox.Chapter;
 import rocks.voss.toniebox.beans.toniebox.CreativeTonie;
 import rocks.voss.toniebox.beans.toniebox.Household;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,8 +51,13 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                 log.error("CreativeTonie not found");
                 return;
             }
+            File f = new File(syncTrack.getFileSystemLocation());
+            if (!f.exists()) {
+                log.info("File does not exist: {}", syncTrack.getFileSystemLocation());
+            }
             creativeTonie.uploadFile(getTrackTitle(syncTrack), syncTrack.getFileSystemLocation());
             creativeTonie.commit();
+
         } catch (Exception e) {
             log.error("Exception", e);
         }
