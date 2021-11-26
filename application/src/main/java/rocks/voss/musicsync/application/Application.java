@@ -41,7 +41,7 @@ public class Application {
         log.debug("Starting in daemon mode");
         while (true) {
             try {
-                sync(connections);
+                sync(config, connections);
                 log.debug("Taking a nap");
                 Thread.sleep(config.getGeneral().getTimeout() * 1000);
                 log.debug("Up again");
@@ -51,7 +51,7 @@ public class Application {
         }
     }
 
-    private static void sync(List<SyncConnection> connections) {
+    private static void sync(Configuration config, List<SyncConnection> connections) {
         for (SyncConnection connection : connections) {
             try {
                 SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
@@ -64,18 +64,11 @@ public class Application {
                 inputPlugin.establishConnection();
                 outputPlugin.establishConnection();
 
-                List<SyncTrack> tracks = inputPlugin.getTracklist(connection);
-                List<SyncTrack> tracksToSync = new ArrayList<>();
-                for (SyncTrack track : tracks) {
-                    if (!outputPlugin.isTrackUploaded(connection, track)) {
-                        tracksToSync.add(track);
-                    }
+                if (config.getGeneral().isBulk()) {
+                    syncBulk(connection);
+                } else {
+                    syncItemized(connection);
                 }
-                inputPlugin.downloadTracks(connection, tracksToSync);
-
-                outputPlugin.cleanUpTracks(connection, tracks);
-                outputPlugin.uploadTracks(connection, tracksToSync);
-                outputPlugin.orderTracks(connection, tracks);
 
                 inputPlugin.closeConnection();
                 outputPlugin.closeConnection();
@@ -83,6 +76,39 @@ public class Application {
                 log.error("Exception", e);
             }
         }
+    }
+
+    private static void syncItemized(SyncConnection connection) {
+        SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
+        SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
+
+        List<SyncTrack> tracks = inputPlugin.getTracklist(connection);
+        outputPlugin.cleanUpTracks(connection, tracks);
+        for (SyncTrack track : tracks) {
+            if (!outputPlugin.isTrackUploaded(connection, track)) {
+                inputPlugin.downloadTrack(connection, track);
+                outputPlugin.uploadTrack(connection, track);
+                outputPlugin.orderTracks(connection, tracks);
+            }
+        }
+    }
+
+    private static void syncBulk(SyncConnection connection) {
+        SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
+        SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
+
+        List<SyncTrack> tracks = inputPlugin.getTracklist(connection);
+        List<SyncTrack> tracksToSync = new ArrayList<>();
+        for (SyncTrack track : tracks) {
+            if (!outputPlugin.isTrackUploaded(connection, track)) {
+                tracksToSync.add(track);
+            }
+        }
+        inputPlugin.downloadTracks(connection, tracksToSync);
+
+        outputPlugin.cleanUpTracks(connection, tracks);
+        outputPlugin.uploadTracks(connection, tracksToSync);
+        outputPlugin.orderTracks(connection, tracks);
     }
 
     private static List<SyncConnection> getConnections(Configuration config) {

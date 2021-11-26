@@ -103,12 +103,17 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
 
     @Override
     public void downloadTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
-        for ( SyncTrack track : syncTracks) {
-            try {
-                SpotifyRecordingHandler.recordTrack(pluginConfiguration, (PlaylistTrack) track.getOriginalTrack(), track.getCacheLocation());
-            } catch (Exception e) {
-                log.error("Exception", e);
-            }
+        for (SyncTrack syncTrack : syncTracks) {
+            downloadTrack(connection, syncTrack);
+        }
+    }
+
+    @Override
+    public void downloadTrack(SyncConnection connection, SyncTrack syncTrack) {
+        try {
+            SpotifyRecordingHandler.recordTrack(pluginConfiguration, (PlaylistTrack) syncTrack.getOriginalTrack(), syncTrack.getCacheLocation());
+        } catch (Exception e) {
+            log.error("Exception", e);
         }
     }
 

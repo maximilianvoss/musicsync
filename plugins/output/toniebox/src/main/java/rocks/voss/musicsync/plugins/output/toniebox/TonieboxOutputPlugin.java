@@ -37,15 +37,20 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public void uploadTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
+        for (SyncTrack syncTrack : syncTracks) {
+            uploadTrack(connection, syncTrack);
+        }
+    }
+
+    @Override
+    public void uploadTrack(SyncConnection connection, SyncTrack syncTrack) {
         try {
             CreativeTonie creativeTonie = getCreativeTonie(connection);
             if (creativeTonie == null) {
                 log.error("CreativeTonie not found");
                 return;
             }
-            for (SyncTrack syncTrack : syncTracks) {
-                creativeTonie.uploadFile(getTrackTitle(syncTrack), syncTrack.getCacheLocation());
-            }
+            creativeTonie.uploadFile(getTrackTitle(syncTrack), syncTrack.getCacheLocation());
             creativeTonie.commit();
         } catch (Exception e) {
             log.error("Exception", e);

@@ -8,4 +8,6 @@ public interface SyncInputPlugin extends SyncPlugin {
     List<SyncTrack> getTracklist(SyncConnection connection);
 
     void downloadTracks(SyncConnection connection, List<SyncTrack> tracks);
+
+    void downloadTrack(SyncConnection connection, SyncTrack track);
 }

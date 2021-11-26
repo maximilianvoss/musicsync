@@ -25,28 +25,32 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public void uploadTracks(SyncConnection connection, List<SyncTrack> syncTracks) {
+        for (SyncTrack syncTrack : syncTracks) {
+            uploadTrack(connection, syncTrack);
+        }
+    }
+
+    @Override
+    public void uploadTrack(SyncConnection connection, SyncTrack syncTrack) {
         try {
             String outputPath = getOutputPath(connection);
+            log.info("Copying: " + getFilename(syncTrack));
+            Runtime rt = Runtime.getRuntime();
+            StringBuilder command = new StringBuilder();
+            command.append("cp ")
+                    .append("\"")
+                    .append(syncTrack.getCacheLocation())
+                    .append("\" \"")
+                    .append(outputPath)
+                    .append("/")
+                    .append(getFilename(syncTrack))
+                    .append("\"");
 
-            for (SyncTrack syncTrack : syncTracks) {
-                log.info("Copying: " + getFilename(syncTrack));
-                Runtime rt = Runtime.getRuntime();
-                StringBuilder command = new StringBuilder();
-                command.append("cp ")
-                        .append("\"")
-                        .append(syncTrack.getCacheLocation())
-                        .append("\" \"")
-                        .append(outputPath)
-                        .append("/")
-                        .append(getFilename(syncTrack))
-                        .append("\"");
+            String[] commands = {"/bin/bash", "-c", command.toString()};
+            log.debug("Executing: " + command.toString());
 
-                String[] commands = {"/bin/bash", "-c", command.toString()};
-                log.debug("Executing: " + command.toString());
-
-                rt.exec(commands).waitFor();
-                log.debug("Execution done");
-            }
+            rt.exec(commands).waitFor();
+            log.debug("Execution done");
         } catch (Exception e) {
             log.error("Exception", e);
         }

@@ -7,6 +7,8 @@ public interface SyncOutputPlugin extends SyncPlugin {
 
     void uploadTracks(SyncConnection connection, List<SyncTrack> syncTracks);
 
+    void uploadTrack(SyncConnection connection, SyncTrack syncTrack);
+
     boolean isTrackUploaded(SyncConnection connection, SyncTrack syncTrack);
 
     void orderTracks(SyncConnection connection, List<SyncTrack> syncTracks);
