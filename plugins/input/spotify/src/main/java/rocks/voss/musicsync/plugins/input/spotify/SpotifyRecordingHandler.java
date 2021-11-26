@@ -16,7 +16,7 @@ import java.util.Map;
 public class SpotifyRecordingHandler {
     final private static Logger log = LogManager.getLogger(SpotifyRecordingHandler.class);
 
-    public static void recordTrack(PluginConfiguration spotifyHandler, PlaylistTrack track, String filePath)
+    public static boolean recordTrack(PluginConfiguration spotifyHandler, PlaylistTrack track, String filePath)
             throws IOException, InterruptedException {
         new File(spotifyHandler.getCachePath()).mkdirs();
 
@@ -28,11 +28,14 @@ public class SpotifyRecordingHandler {
 
         if (track.getTrack() == null) {
             log.debug("Track is not available on Spotify");
+            return false;
         } else if (isFileValid(spotifyHandler, track, spotifyHandler.getCachePath(), filename)) {
             log.debug("File is valid: " + filename);
+            return false;
         } else {
             log.debug("File is not valid: " + filename);
             downloadFile(spotifyHandler, track, filename);
+            return true;
         }
     }
 

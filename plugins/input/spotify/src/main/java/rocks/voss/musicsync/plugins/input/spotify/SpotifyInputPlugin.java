@@ -111,7 +111,8 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     @Override
     public void downloadTrack(SyncConnection connection, SyncTrack syncTrack) {
         try {
-            SpotifyRecordingHandler.recordTrack(pluginConfiguration, (PlaylistTrack) syncTrack.getOriginalTrack(), syncTrack.getCacheLocation());
+            boolean updated = SpotifyRecordingHandler.recordTrack(pluginConfiguration, (PlaylistTrack) syncTrack.getOriginalTrack(), syncTrack.getFileSystemLocation());
+            ((SpotifySyncTrackImpl) syncTrack).setUpdated(updated);
         } catch (Exception e) {
             log.error("Exception", e);
         }

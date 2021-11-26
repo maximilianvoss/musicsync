@@ -24,7 +24,8 @@ public class SpotifySyncTrackImpl implements SyncTrack {
     private int trackNumber;
     private String albumName;
     private Object originalTrack;
-    private String cacheLocation;
+    private String fileSystemLocation;
+    private boolean updated;
 
     public static SyncTrack createBy(PluginConfiguration spotifyHandler, PlaylistTrack playlistTrack, int order) throws IOException, ParseException, SpotifyWebApiException {
         SpotifySyncTrackImpl syncTrack = new SpotifySyncTrackImpl();
@@ -45,7 +46,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
         syncTrack.setTrackNumber(order);
         syncTrack.setAlbumName(track.getAlbum().getName());
         syncTrack.setOriginalTrack(playlistTrack);
-        syncTrack.setCacheLocation(spotifyHandler.getCachePath() + "/" + playlistTrack.getTrack().getId() + ".mp3");
+        syncTrack.setFileSystemLocation(spotifyHandler.getCachePath() + "/" + playlistTrack.getTrack().getId() + ".mp3");
 
         return syncTrack;
     }

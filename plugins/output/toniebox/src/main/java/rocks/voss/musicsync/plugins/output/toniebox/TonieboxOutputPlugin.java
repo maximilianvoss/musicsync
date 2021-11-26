@@ -50,7 +50,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                 log.error("CreativeTonie not found");
                 return;
             }
-            creativeTonie.uploadFile(getTrackTitle(syncTrack), syncTrack.getCacheLocation());
+            creativeTonie.uploadFile(getTrackTitle(syncTrack), syncTrack.getFileSystemLocation());
             creativeTonie.commit();
         } catch (Exception e) {
             log.error("Exception", e);
@@ -232,6 +232,10 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
         for (SyncTrack syncTrack : syncTracks) {
             if (StringUtils.equals(chapter.getTitle(), getTrackTitle(syncTrack))) {
                 log.debug("Chapter found: " + chapter.getTitle());
+                if (syncTrack.isUpdated()) {
+                    log.debug("Track was updated and needs reupload");
+                    return true;
+                }
                 return false;
             }
         }
