@@ -88,9 +88,9 @@ public class Application {
             if (!outputPlugin.isTrackUploaded(connection, track)) {
                 inputPlugin.downloadTrack(connection, track);
                 outputPlugin.uploadTrack(connection, track);
-                outputPlugin.orderTracks(connection, tracks);
             }
         }
+        outputPlugin.orderTracks(connection, tracks);
     }
 
     private static void syncBulk(SyncConnection connection) {
