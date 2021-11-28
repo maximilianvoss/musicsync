@@ -37,16 +37,10 @@ public class PlaylistHandler {
 
     public static List<PlaylistTrack> getTracks(PluginConfiguration spotifyHandler, PlaylistSimplified playlist)
             throws IOException, SpotifyWebApiException, ParseException {
-        int offset = 0;
-        int limit = 10;
         List<PlaylistTrack> tracks = new ArrayList<>();
-        Paging<PlaylistTrack> playlistTrackPaging;
-        do {
-            GetPlaylistsItemsRequest getPlaylistsItemsRequest = spotifyHandler.getSpotifyApi().getPlaylistsItems(playlist.getId()).build();
-            playlistTrackPaging = getPlaylistsItemsRequest.execute();
-            tracks.addAll(Arrays.asList(playlistTrackPaging.getItems()));
-            offset += limit;
-        } while (offset < playlistTrackPaging.getTotal());
+        GetPlaylistsItemsRequest getPlaylistsItemsRequest = spotifyHandler.getSpotifyApi().getPlaylistsItems(playlist.getId()).build();
+        Paging<PlaylistTrack> playlistTrackPaging = getPlaylistsItemsRequest.execute();
+        tracks.addAll(Arrays.asList(playlistTrackPaging.getItems()));
         return tracks;
     }
 }
