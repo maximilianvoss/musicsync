@@ -1,28 +1,59 @@
 # Toniebox Output Plugin
+
 This plugin is capable of uploading tracks to your Creative Tonie.
 
-## Configuration
-```properties
-# Toniebox credentials
-toniebox.username=<username>
-toniebox.password=<password>
+## Plugin Configuration
+
+These are the general plugin configurations:
+
+```json
+"plugins": [
+{
+"plugin": "toniebox",
+"config": {
+"username": "<TONIEBOX USER>", // username for the login
+"password": "<TONIEBOX PASSWORD>"       // password for the login
+}
+]
+``` 
+
+## Connection Configuration
+
+For the connection configuration:
+
+```json
+ "connections": [
+{
+"name": "<CONNECTION NAME>",
+"in": {
+"plugin": "spotify",
+"config": {
+"uri": "<SPOTIFY URI>"
+}
+},
+"out": {
+"plugin": "toniebox", // always "toniebox" for the Toniebox plugin
+"config": {
+"household": "<HOUSEHOLD>", // Household of the creative Tonie
+"tonie": "<CREATIVE TONIE ID>"    // ID of the Creative Tonie
+}
+}
+}
+]
 ```
 
-`<username>` and `<password>` are your Toniebox credentials.
+The easiest way to get the `household` and `tonie` is looking at the URL when you open one of your creative tonies
+at http://meine.tonies.de. Example given:
 
-## Command line arguments
-
---toniebox-username to override the property's username.  
---toniebox-password to override the property's password. 
-
-
-## Output Argument
-The output argument has following schema: toniebox:\[householdId\]:\[creativeTonieId\].  
-For example:  
-`toniebox:b2ca3ceb-cc94-42fc-ab5f-54af67d074c8:F969A20D500304E2`
-
-The easiest way to get the values is looking at the URL when you open one of your creative tonies.
-
+```text
+https://meine.tonies.de/tonies/[HOUSEHOLD]/[TONIE]
 https://meine.tonies.de/tonies/b2ca3ceb-cc94-42fc-ab5f-54af67d074c8/F969A20D500304E2
+```
 
-As you can see, the path after /tonies/ is starting with the household and then ending with the creativeTonieId.
+Results to:
+Results to:
+
+```json
+"household": "b2ca3ceb-cc94-42fc-ab5f-54af67d074c8"
+"tonie": "F969A20D500304E2"
+```

@@ -1,5 +1,5 @@
 # Available Plugins
-This is the list of available plugins with link to it's documentation.
+This is the list of available plugins with link to its documentation.
 
 ## Input Plugins
 * [Spotify](input/spotify/README.md)
