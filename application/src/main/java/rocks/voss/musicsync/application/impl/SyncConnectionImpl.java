@@ -17,11 +17,14 @@ public class SyncConnectionImpl implements SyncConnection {
     private ConnectionEndpoint in;
     @Setter
     private ConnectionEndpoint out;
+    @Setter
+    private String name;
 
-    public static SyncConnection createBy(ConnectionEndpoint in, ConnectionEndpoint out) {
+    public static SyncConnection createBy(String name, ConnectionEndpoint in, ConnectionEndpoint out) {
         SyncConnectionImpl connection = new SyncConnectionImpl();
         connection.setIn(in);
         connection.setOut(out);
+        connection.setName(name);
 
         return connection;
     }
@@ -58,5 +61,10 @@ public class SyncConnectionImpl implements SyncConnection {
     @Override
     public Object getOutputConfig() {
         return out.getConfig();
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

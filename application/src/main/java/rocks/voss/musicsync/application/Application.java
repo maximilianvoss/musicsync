@@ -57,6 +57,8 @@ public class Application {
                 SyncInputPlugin inputPlugin = connection.getSyncInputPlugin();
                 SyncOutputPlugin outputPlugin = connection.getSyncOutputPlugin();
 
+                log.info("Working on connection: " + connection.getName());
+
                 if (inputPlugin == null || outputPlugin == null) {
                     log.error("One is null\nInputPlugin: " + inputPlugin + ", outputPlugin: " + outputPlugin);
                 }
@@ -114,7 +116,7 @@ public class Application {
     private static List<SyncConnection> getConnections(Configuration config) {
         List<SyncConnection> connections = new ArrayList<>();
         for (SyncConfiguration connectionWrapperBean : config.getConnections()) {
-            connections.add(SyncConnectionImpl.createBy(connectionWrapperBean.getIn(), connectionWrapperBean.getOut()));
+            connections.add(SyncConnectionImpl.createBy(connectionWrapperBean.getName(), connectionWrapperBean.getIn(), connectionWrapperBean.getOut()));
         }
         return connections;
     }

@@ -2,6 +2,7 @@ package rocks.voss.musicsync.api;
 
 public interface SyncConnection {
     String getInputSchema();
+
     SyncInputPlugin getSyncInputPlugin();
 
     Object getInputConfig();
@@ -11,4 +12,6 @@ public interface SyncConnection {
     SyncOutputPlugin getSyncOutputPlugin();
 
     Object getOutputConfig();
+
+    String getName();
 }
