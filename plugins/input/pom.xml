@@ -7,7 +7,7 @@
     <parent>
         <groupId>rocks.voss</groupId>
         <artifactId>musicsync-plugins</artifactId>
-        <version>3.0-SNAPSHOT</version>
+        <version>3.0</version>
     </parent>
 
     <artifactId>musicsync-plugins-input</artifactId>
