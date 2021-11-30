@@ -32,8 +32,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public String helpScreen() {
-        return "--toniebox-username USERNAME\n\t\tSet the Toniebox username to login to Toniebox\n" +
-                "--toniebox-password PASSWORD\n\t\tSet the password for the Toniebox user for login\n";
+        return StringUtils.EMPTY;
     }
 
     @Override
@@ -158,17 +157,6 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public boolean parseArguments(String[] args) {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (StringUtils.equals(arg, "--toniebox-username")) {
-                username = args[++i];
-                log.debug("--toniebox-username: " + username);
-            } else if (StringUtils.equals(arg, "--toniebox-password")) {
-                password = args[++i];
-                log.debug("--toniebox-password: " + password);
-            }
-        }
-        log.debug("Parsing arguments is okay");
         return true;
     }
 

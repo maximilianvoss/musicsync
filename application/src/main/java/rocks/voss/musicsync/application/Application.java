@@ -1,5 +1,6 @@
 package rocks.voss.musicsync.application;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -18,27 +19,54 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.exit;
+
 public class Application {
     final private static Logger log = LogManager.getLogger(Application.class);
-    private static List<SyncConnection> connections;
 
     public static void main(String[] args) throws Exception {
+        // load plugins within classpath & modules
+        PluginLoader.loadPlugins();
+
+        // load logger configuration if log4j2 file is present in local directory
         File file = new File("log4j2.xml");
         if (file != null) {
             LoggerContext context = (org.apache.logging.log4j.core.LoggerContext) LogManager.getContext(false);
             context.setConfigLocation(file.toURI());
         }
 
-        InputStream jsonStream = new FileInputStream("musicsync.json");
+        // check for command line arguments
+        String configFile = "musicsync.json";
+        for (int i = 0; i < args.length; i++) {
+            String arg = args[0];
+            if (StringUtils.equals(arg, "--help")) {
+                printHelp();
+            }
+            if (StringUtils.equals(arg, "--file") || StringUtils.equals(arg, "-f")) {
+                if (i + 1 < args.length) {
+                    configFile = args[++i];
+                } else {
+                    configFile = null;
+                }
+            }
+        }
+
+        // Help screen in case configFile is empty or not set
+        if (StringUtils.isBlank(configFile)) {
+            printHelp();
+        }
+
+        // load configuration JSON
+        InputStream jsonStream = new FileInputStream(configFile);
         Configuration config = JSONHelper.createBean(Configuration.class, jsonStream);
 
-        PluginLoader.loadPlugins();
+        // initialize all plugins with args & configuration
         if (!PluginLoader.initPlugins(config, args)) {
             printHelp();
         }
 
-        connections = getConnections(config);
-        log.debug("Starting in daemon mode");
+        // go into sync loop
+        List<SyncConnection> connections = getConnections(config);
         while (true) {
             try {
                 sync(config, connections);
@@ -122,8 +150,11 @@ public class Application {
     }
 
     private static void printHelp() {
-        StringBuilder help = new StringBuilder("Usage: spotify-toniebox-sync.jar\n");
+        StringBuilder help = new StringBuilder("Usage: musicsync\n");
+        help.append("--help\n\t\tThis help screen\n");
+        help.append("--file|-f FILE\n\t\tDefine a JSON file which shall be used for configuration\n");
         PluginLoader.getHelpMessages(help);
-        System.out.println(help);
+        System.out.print(help);
+        exit(0);
     }
 }

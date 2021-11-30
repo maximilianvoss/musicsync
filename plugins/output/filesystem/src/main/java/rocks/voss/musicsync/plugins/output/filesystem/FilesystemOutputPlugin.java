@@ -20,7 +20,7 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public String helpScreen() {
-        return "--filesystem-directory DIRECTORY\n\t\tSet the output path for the files\n";
+        return StringUtils.EMPTY;
     }
 
     @Override
@@ -119,14 +119,6 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
 
     @Override
     public boolean parseArguments(String[] args) throws Exception {
-        for (int i = 0; i < args.length; i++) {
-            String arg = args[i];
-            if (StringUtils.equals(arg, "--filesystem-directory")) {
-                directory = args[++i];
-                log.debug("--filesystem-directory: " + directory);
-            }
-        }
-        log.debug("Parsing arguments is okay");
         return true;
     }
 

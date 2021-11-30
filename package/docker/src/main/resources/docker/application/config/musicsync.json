@@ -1,6 +1,7 @@
 {
   "general": {
-    "timeout": 60
+    "timeout": 60,
+    "bulk": true
   },
   "plugins": [
     {
@@ -17,8 +18,8 @@
     {
       "plugin": "toniebox",
       "config": {
-        "username": "<TONIE USER>",
-        "password": "<TONIE PASSWORD>"
+        "username": "<TONIEBOX USER>",
+        "password": "<TONIEBOX PASSWORD>"
       }
     },
     {
@@ -30,10 +31,11 @@
   ],
   "connections": [
     {
+      "name": "<CONNECTION NAME>",
       "in": {
         "plugin": "spotify",
         "config": {
-          "uri": "playlist:<PLAYLIST>"
+          "uri": "<SPOTIFY URI>"
         }
       },
       "out": {
@@ -45,16 +47,17 @@
       }
     },
     {
+      "name": "<CONNECTION NAME>",
       "in": {
         "plugin": "spotify",
         "config": {
-          "uri": "playlist:<PLAYLIST>"
+          "uri": "<SPOTIFY URI>"
         }
       },
       "out": {
         "plugin": "filesystem",
         "config": {
-          "directory": "<FOLDER>"
+          "directory": "<OPTIONAL OUTPUT FOLDER>"
         }
       }
     }

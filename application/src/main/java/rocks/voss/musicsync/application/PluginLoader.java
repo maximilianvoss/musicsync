@@ -37,7 +37,7 @@ public class PluginLoader {
         for (SyncInputPlugin inputPlugin : inputPlugins.values()) {
             helpMessages.append(inputPlugin.helpScreen());
         }
-        helpMessages.append("\nOutput Plugins:\n");
+        helpMessages.append("Output Plugins:\n");
         for (SyncOutputPlugin outputPlugin : outputPlugins.values()) {
             helpMessages.append(outputPlugin.helpScreen());
         }

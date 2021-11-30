@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static java.lang.System.exit;
+
 public class SpotifyInputPlugin implements SyncInputPlugin {
     final private static Logger log = LogManager.getLogger(SpotifyInputPlugin.class);
     private PluginConfiguration pluginConfiguration;
@@ -51,11 +53,13 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
             if (StringUtils.equals(arg, "--spotify-apicode") && args.length == 1) {
                 log.debug("--spotify-apicode");
                 SpotifyAuthenticationSetup.getSignInUrl(pluginConfiguration);
+                exit(0);
                 return true;
             } else if (StringUtils.equals(arg, "--spotify-code") && args.length == 2) {
                 String code = args[++i];
                 log.debug("--spotify-code: " + code);
                 SpotifyAuthenticationSetup.getAccessToken(pluginConfiguration, code);
+                exit(0);
                 return true;
             } else if (StringUtils.equals(arg, "--spotify-apicode") && args.length != 1) {
                 log.debug("--spotify-apicode has wrong argument count");
@@ -72,7 +76,7 @@ public class SpotifyInputPlugin implements SyncInputPlugin {
     @Override
     public String helpScreen() {
         return "--spotify-apicode\n\t\tGenerate an API Code URL to get attach Application to Spotify Account\n" +
-                "--spotify-code CODE\n\t\tGenerate a Refresh token out of the Spotify Code\n";
+                "--spotify-code CODE\n\t\tGenerate a Refresh token out of the Spotify Code\n\n";
     }
 
     @Override
