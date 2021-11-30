@@ -42,11 +42,11 @@ public class Application {
         while (true) {
             try {
                 sync(config, connections);
-                log.debug("Taking a nap");
+                log.debug("Taking a nap for: " + config.getGeneral().getTimeout() * 1000 + " seconds.");
                 Thread.sleep(config.getGeneral().getTimeout() * 1000);
                 log.debug("Up again");
             } catch (Exception e) {
-                log.error("Exception");
+                log.error("Exception", e);
             }
         }
     }
