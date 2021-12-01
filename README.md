@@ -111,3 +111,20 @@ During the image execution following folder is shared from the host with the ima
 
 ## Plugins
 All plugins with their documentation can be found at [plugins/README.md](plugins/README.md).
+
+## Known Issues
+
+**Spotify Repository Public Key missing**  
+Indicator:
+```text
+Reading package lists...
+W: GPG error: http://repository.spotify.com stable InRelease: The following signatures couldn't be verified because the public key is not available: NO_PUBKEY 5E3C45D7B312C643
+E: The repository 'http://repository.spotify.com stable InRelease' is not signed.
+The command '/bin/sh -c apt-get update' returned a non-zero code: 100
+Sending build context to Docker daemon  15.36kB
+Step 1/12 : FROM maximilianvoss/musicsyncbase
+pull access denied for maximilianvoss/musicsyncbase, repository does not exist or may require 'docker login': denied: requested access to the resource is denied
+[ERROR] Command execution failed.
+```
+Resolution:  
+Retry after a certain amount of time - sometimes days. This is an error on Spotify's server infrastructure.
