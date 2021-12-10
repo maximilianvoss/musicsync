@@ -70,7 +70,7 @@ public class Application {
         while (true) {
             try {
                 sync(config, connections);
-                log.debug("Taking a nap for: " + config.getGeneral().getTimeout() * 1000 + " seconds.");
+                log.debug("Taking a nap for: " + config.getGeneral().getTimeout() + " seconds.");
                 Thread.sleep(config.getGeneral().getTimeout() * 1000);
                 log.debug("Up again");
             } catch (Exception e) {
