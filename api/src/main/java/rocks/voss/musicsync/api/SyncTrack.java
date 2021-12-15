@@ -1,23 +1,48 @@
 package rocks.voss.musicsync.api;
 
 public interface SyncTrack {
+    /**
+     * @return plugin which is used to retrieve this track
+     */
+    SyncPlugin getPlugin();
+
+    /**
+     * @return track identifiere
+     */
     String getId();
 
+    /**
+     * @return URI to track
+     */
     String getUri();
 
+    /**
+     * @return list of artists
+     */
     String[] getArtists();
 
+    /**
+     * @return track name
+     */
     String getName();
 
-    int getDiscNumber();
-
+    /**
+     * @return track number on album
+     */
     int getTrackNumber();
 
-    String getAlbumName();
+    /**
+     * @return length of track
+     */
+    long getTrackLength();
 
-    Object getOriginalTrack();
+    /**
+     * @return album name
+     */
+    String getAlbum();
 
-    boolean isUpdated();
-
-    String getFileSystemLocation();
+    /**
+     * @return path to file in filesystem where track is stored
+     */
+    String getPath();
 }
