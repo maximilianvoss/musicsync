@@ -9,7 +9,8 @@ These are the general plugin configurations:
         "plugin": "toniebox",
         "config": {
             "username": "<TONIEBOX USER>",          // username for the login
-            "password": "<TONIEBOX PASSWORD>"       // password for the login
+            "password": "<TONIEBOX PASSWORD>",      // password for the login
+            "threshold": 2000                       // threshold on how much longer/shorter a track can be before re-upload
     }
 ]
 ``` 
@@ -43,7 +44,6 @@ Example given:
 https://meine.tonies.de/tonies/[HOUSEHOLD]/[TONIE]
 https://meine.tonies.de/tonies/b2ca3ceb-cc94-42fc-ab5f-54af67d074c8/F969A20D500304E2
 ```
-Results to:
 Results to:
 ```json
 "household": "b2ca3ceb-cc94-42fc-ab5f-54af67d074c8"  
