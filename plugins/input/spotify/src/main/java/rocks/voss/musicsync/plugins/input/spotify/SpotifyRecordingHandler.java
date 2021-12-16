@@ -1,6 +1,5 @@
 package rocks.voss.musicsync.plugins.input.spotify;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import rocks.voss.musicsync.plugins.input.spotify.config.PluginConfiguration;
@@ -16,25 +15,20 @@ import java.util.Map;
 public class SpotifyRecordingHandler {
     final private static Logger log = LogManager.getLogger(SpotifyRecordingHandler.class);
 
-    public static boolean recordTrack(PluginConfiguration spotifyHandler, PlaylistTrack track, String filePath)
+    public static boolean recordTrack(PluginConfiguration spotifyHandler, PlaylistTrack track, File fileDestination)
             throws IOException, InterruptedException {
-        new File(spotifyHandler.getCachePath()).mkdirs();
 
-        filePath = filePath.replace("//", "/");
-        String filename = StringUtils.replace(filePath, spotifyHandler.getCachePath(), "");
-        if (StringUtils.startsWith(filename, "/")) {
-            filename = StringUtils.substring(filename, 1);
-        }
+        new File(fileDestination.getPath()).mkdirs();
 
         if (track.getTrack() == null) {
             log.debug("Track is not available on Spotify");
             return false;
-        } else if (isFileValid(spotifyHandler, track, spotifyHandler.getCachePath(), filename)) {
-            log.debug("File is valid: " + filename);
+        } else if (isFileValid(spotifyHandler, track, fileDestination)) {
+            log.debug("File is valid: " + fileDestination.getAbsolutePath());
             return false;
         } else {
-            log.debug("File is not valid: " + filename);
-            downloadFile(spotifyHandler, track, filename);
+            log.debug("File is not valid: " + fileDestination.getAbsolutePath());
+            downloadFile(spotifyHandler, track, fileDestination.getAbsolutePath());
             return true;
         }
     }
@@ -56,43 +50,36 @@ public class SpotifyRecordingHandler {
         log.debug("Execution done");
     }
 
-    private static boolean isFileValid(PluginConfiguration spotifyHandler, PlaylistTrack track, String path, String filename) {
-        log.debug("Checking: " + filename);
+    public static boolean isFileValid(PluginConfiguration spotifyHandler, PlaylistTrack track, File file) {
+        log.debug("Checking: " + file.getAbsolutePath());
 
-        File dir = new File(path);
-        File[] files = dir.listFiles((directory, dirFile) -> StringUtils.equals(dirFile, filename));
-
-        if (files != null && files.length == 1) {
+        if (file.exists()) {
             try {
-                AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(files[0]);
+                AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
                 Map<?, ?> properties = fileFormat.properties();
                 String key = "duration";
                 Long microseconds = (Long) properties.get(key);
                 int mili = (int) (microseconds / 1000);
                 int delta = mili - track.getTrack().getDurationMs();
 
-                log.debug("MP3 duration  : " + mili);
-                log.debug("Track duration: " + track.getTrack().getDurationMs());
-                log.debug("Delta duration: " + delta);
+                log.info("MP3 duration  : " + mili);
+                log.info("Track duration: " + track.getTrack().getDurationMs());
+                log.info("Delta duration: " + delta);
 
                 if (delta > spotifyHandler.getTrackThreshold() || delta < -spotifyHandler.getTrackThreshold()) {
                     log.info("Delta is too big");
-                    files[0].delete();
+                    file.delete();
                     return false;
                 }
-            } catch (IOException e) {
-                log.error("IOException in file: " + files[0].getAbsolutePath(), e);
-                files[0].delete();
-                return false;
-            } catch (UnsupportedAudioFileException e) {
-                log.error("UnsupportedAudioFileException in file: " + files[0].getAbsolutePath(), e);
-                files[0].delete();
+            } catch (IOException | UnsupportedAudioFileException e) {
+                log.error("Exception in file: " + file.getAbsolutePath(), e);
+                file.delete();
                 return false;
             }
-            log.info("File is okay: " + filename);
+            log.info("File is okay: " + file.getAbsolutePath());
             return true;
         }
-        log.info("File doesn't exists: " + filename);
+        log.info("File doesn't exists: " + file.getAbsolutePath());
         return false;
     }
 }

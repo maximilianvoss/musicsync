@@ -39,7 +39,7 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
             StringBuilder command = new StringBuilder();
             command.append("cp ")
                     .append("\"")
-                    .append(syncTrack.getFileSystemLocation())
+                    .append(syncTrack.getPath())
                     .append("\" \"")
                     .append(outputPath)
                     .append("/")
@@ -87,7 +87,7 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
             File[] files = dir.listFiles((directory, dirFile) -> {
                 for (SyncTrack syncTrack : syncTracks) {
                     if (StringUtils.equals(dirFile, getFilename(syncTrack))) {
-                        if (syncTrack.isUpdated()) {
+                        if (syncTrack.isFresh()) {
                             return true;
                         }
                         return false;
@@ -118,7 +118,7 @@ public class FilesystemOutputPlugin implements SyncOutputPlugin {
     }
 
     @Override
-    public boolean parseArguments(String[] args) throws Exception {
+    public boolean parseArguments(String[] args) {
         return true;
     }
 

@@ -27,8 +27,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     private List<Household> households;
     private TonieHandler tonieHandler;
     private Map<SyncConnection, CreativeTonie> tonieCache = new HashMap<>();
-    private String username;
-    private String password;
+    private PluginConfiguration pluginConfiguration;
 
     @Override
     public String helpScreen() {
@@ -50,11 +49,11 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                 log.error("CreativeTonie not found");
                 return;
             }
-            File f = new File(syncTrack.getFileSystemLocation());
+            File f = new File(syncTrack.getPath());
             if (!f.exists()) {
-                log.info("File does not exist: {}", syncTrack.getFileSystemLocation());
+                log.info("File does not exist: {}", f.getAbsolutePath());
             }
-            creativeTonie.uploadFile(getTrackTitle(syncTrack), syncTrack.getFileSystemLocation());
+            creativeTonie.uploadFile(getTrackTitle(syncTrack), f.getAbsolutePath());
             creativeTonie.commit();
 
         } catch (Exception e) {
@@ -147,9 +146,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     @Override
     public void init(Object configuration) {
         try {
-            PluginConfiguration pluginConfiguration = JSONHelper.createBean(PluginConfiguration.class, configuration);
-            username = pluginConfiguration.getUsername();
-            password = pluginConfiguration.getPassword();
+            pluginConfiguration = JSONHelper.createBean(PluginConfiguration.class, configuration);
         } catch (IOException e) {
             log.error(e);
         }
@@ -180,7 +177,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
             if (tonieHandler == null) {
                 tonieHandler = new TonieHandler();
             }
-            tonieHandler.login(username, password);
+            tonieHandler.login(pluginConfiguration.getUsername(), pluginConfiguration.getPassword());
             households = tonieHandler.getHouseholds();
         } catch (Exception e) {
             log.error("Exception while login", e);
@@ -226,8 +223,12 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
         for (SyncTrack syncTrack : syncTracks) {
             if (StringUtils.equals(chapter.getTitle(), getTrackTitle(syncTrack))) {
                 log.debug("Chapter found: " + chapter.getTitle());
-                if (syncTrack.isUpdated()) {
-                    log.debug("Track was updated and needs reupload");
+                if (syncTrack.isFresh()) {
+                    log.debug("Track was updated and needs reupload: ", syncTrack.getId());
+                    return true;
+                }
+                if (isValidTrack(syncTrack, chapter)) {
+                    log.debug("discrepancy between source & target: ", syncTrack.getId());
                     return true;
                 }
                 return false;
@@ -244,5 +245,21 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
             }
         }
         return null;
+    }
+
+    private boolean isValidTrack(SyncTrack syncTrack, Chapter chapter) {
+        int chapterDuration = Math.round(chapter.getSeconds());
+        int diff = chapterDuration - syncTrack.getTrackDuration();
+
+        log.debug("SyncTrack length: ", syncTrack.getTrackDuration());
+        log.debug("Chapter length: ", chapter.getSeconds());
+        log.debug("Calc'd Diff: ", diff);
+
+        if (diff > pluginConfiguration.getThreshold() || diff < -pluginConfiguration.getThreshold()) {
+            log.debug("not valid");
+            return false;
+        }
+        log.debug("valid");
+        return true;
     }
 }

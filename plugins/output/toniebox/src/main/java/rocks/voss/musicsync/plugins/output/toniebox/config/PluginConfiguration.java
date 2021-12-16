@@ -6,4 +6,5 @@ import lombok.Data;
 public class PluginConfiguration {
     private String username;
     private String password;
+    private int threshold = 2000;
 }

@@ -34,7 +34,7 @@ public interface SyncTrack {
     /**
      * @return length of track
      */
-    long getTrackLength();
+    int getTrackDuration();
 
     /**
      * @return album name
@@ -45,4 +45,9 @@ public interface SyncTrack {
      * @return path to file in filesystem where track is stored
      */
     String getPath();
+
+    /**
+     * @return in indicator if the file is freshly downloaded or if cache is updated
+     */
+    boolean isFresh();
 }
