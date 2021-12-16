@@ -72,7 +72,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
             for (Chapter chapter : creativeTonie.getChapters()) {
                 if (StringUtils.equals(chapter.getTitle(), getTrackTitle(syncTrack))) {
                     log.debug("Track found: " + chapter.getTitle());
-                    return true;
+                    return isValidTrack(syncTrack, chapter);
                 }
             }
         } catch (Exception e) {
