@@ -32,7 +32,7 @@ public interface SyncTrack {
     int getTrackNumber();
 
     /**
-     * @return length of track
+     * @return length of track in ms
      */
     int getTrackDuration();
 

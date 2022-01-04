@@ -248,11 +248,11 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
     }
 
     private boolean isValidTrack(SyncTrack syncTrack, Chapter chapter) {
-        int chapterDuration = Math.round(chapter.getSeconds());
+        int chapterDuration = Math.round(chapter.getSeconds()) * 1000;
         int diff = chapterDuration - syncTrack.getTrackDuration();
 
         log.debug("SyncTrack length: " + syncTrack.getTrackDuration());
-        log.debug("Chapter length: " + chapter.getSeconds());
+        log.debug("Chapter length: " + chapter.getSeconds() * 1000);
         log.debug("Calc'd Diff: " + diff);
 
         if (diff > pluginConfiguration.getThreshold() || diff < -pluginConfiguration.getThreshold()) {
