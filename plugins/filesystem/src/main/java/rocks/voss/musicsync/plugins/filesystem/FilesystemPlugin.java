@@ -14,8 +14,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-public class FilesystemOutputPlugin implements SyncOutputPlugin {
-    final private static Logger log = LogManager.getLogger(FilesystemOutputPlugin.class);
+public class FilesystemPlugin implements SyncOutputPlugin {
+    final private static Logger log = LogManager.getLogger(FilesystemPlugin.class);
     private String directory;
 
     @Override

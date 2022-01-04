@@ -33,7 +33,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
 
     private PlaylistTrack spotifyTrack;
 
-    public static SyncTrack createBy(SpotifyInputPlugin spotifyInputPlugin, PlaylistTrack playlistTrack, int order) throws IOException, ParseException, SpotifyWebApiException {
+    public static SyncTrack createBy(SpotifyPlugin spotifyInputPlugin, PlaylistTrack playlistTrack, int order) throws IOException, ParseException, SpotifyWebApiException {
         SpotifySyncTrackImpl syncTrack = new SpotifySyncTrackImpl();
 
         GetTrackRequest getTrackRequest = spotifyInputPlugin.getPluginConfiguration().getSpotifyApi().getTrack(playlistTrack.getTrack().getId()).build();
@@ -59,7 +59,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
     }
 
     public boolean isFresh() {
-        SpotifyInputPlugin spotifyInputPlugin = (SpotifyInputPlugin) getPlugin();
+        SpotifyPlugin spotifyInputPlugin = (SpotifyPlugin) getPlugin();
         File fileDestination = getFileDestination(spotifyInputPlugin);
 
         SpotifyRecordingHandler.isFileValid(spotifyInputPlugin.getPluginConfiguration(), spotifyTrack, fileDestination);
@@ -67,7 +67,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
     }
 
     public String getPath() {
-        SpotifyInputPlugin spotifyInputPlugin = (SpotifyInputPlugin) getPlugin();
+        SpotifyPlugin spotifyInputPlugin = (SpotifyPlugin) getPlugin();
         File fileDestination = getFileDestination(spotifyInputPlugin);
         try {
             fresh = SpotifyRecordingHandler.recordTrack(spotifyInputPlugin.getPluginConfiguration(), spotifyTrack, fileDestination);
@@ -77,7 +77,7 @@ public class SpotifySyncTrackImpl implements SyncTrack {
         return fileDestination.getAbsolutePath();
     }
 
-    private File getFileDestination(SpotifyInputPlugin spotifyInputPlugin) {
+    private File getFileDestination(SpotifyPlugin spotifyInputPlugin) {
         String cachePath = spotifyInputPlugin.getPluginConfiguration().getCachePath() + "/" + getId() + ".mp3";
         return new File(cachePath);
     }

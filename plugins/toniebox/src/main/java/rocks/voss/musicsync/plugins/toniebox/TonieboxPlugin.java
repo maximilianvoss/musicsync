@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-public class TonieboxOutputPlugin implements SyncOutputPlugin {
-    final private static Logger log = LogManager.getLogger(TonieboxOutputPlugin.class);
+public class TonieboxPlugin implements SyncOutputPlugin {
+    final private static Logger log = LogManager.getLogger(TonieboxPlugin.class);
 
     private List<Household> households;
     private TonieHandler tonieHandler;

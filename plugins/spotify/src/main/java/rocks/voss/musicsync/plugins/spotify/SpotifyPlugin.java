@@ -21,8 +21,8 @@ import java.util.List;
 
 import static java.lang.System.exit;
 
-public class SpotifyInputPlugin implements SyncInputPlugin {
-    final private static Logger log = LogManager.getLogger(SpotifyInputPlugin.class);
+public class SpotifyPlugin implements SyncInputPlugin {
+    final private static Logger log = LogManager.getLogger(SpotifyPlugin.class);
 
     @Getter
     private PluginConfiguration pluginConfiguration;
