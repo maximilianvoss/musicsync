@@ -23,7 +23,8 @@
     </dependencies>
 
     <modules>
-        <module>input</module>
-        <module>output</module>
+        <module>filesystem</module>
+        <module>spotify</module>
+        <module>toniebox</module>
     </modules>
 </project>
