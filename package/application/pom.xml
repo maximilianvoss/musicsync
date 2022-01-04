@@ -23,19 +23,19 @@
         </dependency>
         <dependency>
             <groupId>rocks.voss</groupId>
-            <artifactId>musicsync-plugins-output-toniebox</artifactId>
+            <artifactId>musicsync-plugins-toniebox</artifactId>
             <version>3.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>rocks.voss</groupId>
-            <artifactId>musicsync-plugins-output-filesystem</artifactId>
+            <artifactId>musicsync-plugins-filesystem</artifactId>
             <version>3.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>rocks.voss</groupId>
-            <artifactId>musicsync-plugins-input-spotify</artifactId>
+            <artifactId>musicsync-plugins-spotify</artifactId>
             <version>3.1-SNAPSHOT</version>
             <type>jar</type>
         </dependency>

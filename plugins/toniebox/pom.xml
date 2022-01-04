@@ -10,7 +10,7 @@
         <version>3.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>musicsync-plugins-output-toniebox</artifactId>
+    <artifactId>musicsync-plugins-toniebox</artifactId>
     <name>Music Sync Plugin Toniebox</name>
     <packaging>jar</packaging>
 
