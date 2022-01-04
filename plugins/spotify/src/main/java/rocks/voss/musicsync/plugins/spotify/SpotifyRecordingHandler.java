@@ -18,7 +18,7 @@ public class SpotifyRecordingHandler {
     public static boolean recordTrack(PluginConfiguration spotifyHandler, PlaylistTrack track, File fileDestination)
             throws IOException, InterruptedException {
 
-        new File(fileDestination.getPath()).mkdirs();
+        new File(fileDestination.getParent()).mkdirs();
 
         if (track.getTrack() == null) {
             log.debug("Track is not available on Spotify");
