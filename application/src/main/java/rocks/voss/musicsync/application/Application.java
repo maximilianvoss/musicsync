@@ -116,7 +116,6 @@ public class Application {
         outputPlugin.cleanUpTracks(connection, tracks);
         for (SyncTrack track : tracks) {
             if (!outputPlugin.isTrackUploaded(connection, track)) {
-                inputPlugin.downloadTrack(connection, track);
                 outputPlugin.uploadTrack(connection, track);
             }
         }
@@ -134,8 +133,6 @@ public class Application {
                 tracksToSync.add(track);
             }
         }
-        inputPlugin.downloadTracks(connection, tracksToSync);
-
         outputPlugin.cleanUpTracks(connection, tracks);
         outputPlugin.uploadTracks(connection, tracksToSync);
         outputPlugin.orderTracks(connection, tracks);
