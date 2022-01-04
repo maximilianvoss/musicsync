@@ -50,7 +50,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                 return;
             }
             File f = new File(syncTrack.getPath());
-            if (!f.exists()) {
+            if (f.exists() && f.isFile() && !f.isDirectory()) {
                 log.info("File does not exist: {}", f.getAbsolutePath());
             }
             creativeTonie.uploadFile(getTrackTitle(syncTrack), f.getAbsolutePath());

@@ -53,7 +53,7 @@ public class SpotifyRecordingHandler {
     public static boolean isFileValid(PluginConfiguration spotifyHandler, PlaylistTrack track, File file) {
         log.debug("Checking: " + file.getAbsolutePath());
 
-        if (file.exists()) {
+        if (file.exists() && file.isFile() && !file.isDirectory()) {
             try {
                 AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
                 Map<?, ?> properties = fileFormat.properties();
