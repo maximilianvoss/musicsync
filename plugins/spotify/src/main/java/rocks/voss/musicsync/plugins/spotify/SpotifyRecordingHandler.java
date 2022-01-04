@@ -28,7 +28,7 @@ public class SpotifyRecordingHandler {
             return false;
         } else {
             log.debug("File is not valid: " + fileDestination.getAbsolutePath());
-            downloadFile(spotifyHandler, track, fileDestination.getAbsolutePath());
+            downloadFile(spotifyHandler, track, fileDestination.getName());
             return true;
         }
     }
