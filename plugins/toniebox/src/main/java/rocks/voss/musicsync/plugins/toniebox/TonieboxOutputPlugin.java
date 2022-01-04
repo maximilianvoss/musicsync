@@ -50,8 +50,9 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                 return;
             }
             File f = new File(syncTrack.getPath());
-            if (f.exists() && f.isFile() && !f.isDirectory()) {
+            if (!f.exists() || !f.isFile() || f.isDirectory()) {
                 log.info("File does not exist: {}", f.getAbsolutePath());
+                return;
             }
             creativeTonie.uploadFile(getTrackTitle(syncTrack), f.getAbsolutePath());
             creativeTonie.commit();
@@ -228,7 +229,7 @@ public class TonieboxOutputPlugin implements SyncOutputPlugin {
                     return true;
                 }
                 if (isValidTrack(syncTrack, chapter)) {
-                    log.debug("discrepancy between source & target: " + syncTrack.getId());
+                    log.debug("discrepancy between source & target is okay: " + syncTrack.getId());
                     return true;
                 }
                 return false;
