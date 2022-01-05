@@ -2,7 +2,7 @@
 #
 
 while true; do
-    ./run.sh
+    ./image_run.sh
     sleep 2h
     containerId=$(docker ps -f ancestor=maximilianvoss/musicsycapplication -f status=running -q)
     docker kill $containerId
