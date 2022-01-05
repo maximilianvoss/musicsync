@@ -65,6 +65,6 @@ public class SyncConnectionImpl implements SyncConnection {
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 }
