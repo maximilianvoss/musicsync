@@ -14,10 +14,14 @@ export DBUS_SESSION_BUS_ADDRESS
 export DBUS_SESSION_BUS_PID
 export DBUS_SESSION_BUS_WINDOWID
 
+sleep 10
+
 nohup pulseaudio --system &
 nohup pulseaudio --start &
 x11vnc -forever -shared -passwd $VNCPASSWORD &
 sleep 10
 spotify $SPOTIFY_OPTIONS &
+
+sleep 10
 cd /musicsync
-./musicsync --daemon
+./musicsync
