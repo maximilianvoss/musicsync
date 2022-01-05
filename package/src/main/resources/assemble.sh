@@ -50,5 +50,5 @@ if [ "$2" == "docker" ]; then
     cp $resources/docker/base/* $targetDocker
     cp -R $resources/docker/application/* $target
 
-    $target/image_build.sh
+    (cd $target; ./image_build.sh)
 fi
