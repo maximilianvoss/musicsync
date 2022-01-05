@@ -45,6 +45,8 @@ public class TonieboxPlugin implements SyncOutputPlugin {
     public void uploadTrack(SyncConnection connection, SyncTrack syncTrack) {
         try {
             CreativeTonie creativeTonie = getCreativeTonie(connection);
+            creativeTonie.refresh();
+
             if (creativeTonie == null) {
                 log.error("CreativeTonie not found");
                 return;
@@ -225,14 +227,15 @@ public class TonieboxPlugin implements SyncOutputPlugin {
         for (SyncTrack syncTrack : syncTracks) {
             if (StringUtils.equals(chapter.getTitle(), getTrackTitle(syncTrack))) {
                 log.debug("Chapter found: " + chapter.getTitle());
+                if (!isValidTrack(syncTrack, chapter)) {
+                    log.debug("discrepancy between source & target is too high: " + syncTrack.getId());
+                    return true;
+                }
                 if (syncTrack.isFresh()) {
                     log.debug("Track was updated and needs reupload: " + syncTrack.getId());
                     return true;
                 }
-                if (isValidTrack(syncTrack, chapter)) {
-                    log.debug("discrepancy between source & target is okay: " + syncTrack.getId());
-                    return true;
-                }
+                log.debug("Chapter is not to be removed: " + syncTrack.getId());
                 return false;
             }
         }
