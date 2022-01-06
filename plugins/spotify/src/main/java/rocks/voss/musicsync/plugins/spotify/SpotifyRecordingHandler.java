@@ -41,6 +41,7 @@ public class SpotifyRecordingHandler {
                 .append(spotifyHandler.getCachePath())
                 .append("/")
                 .append(filename)
+                .append("; ")
                 .append("stream_recorder.pl --uri '")
                 .append(track.getTrack().getUri())
                 .append("' --silent --format mp3 --outdir ")
