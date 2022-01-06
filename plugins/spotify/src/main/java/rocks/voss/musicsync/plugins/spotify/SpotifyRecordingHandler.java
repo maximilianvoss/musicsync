@@ -40,7 +40,7 @@ public class SpotifyRecordingHandler {
         command.append("rm ")
                 .append(spotifyHandler.getCachePath())
                 .append("/")
-                .append(filename);
+                .append(filename)
                 .append("stream_recorder.pl --uri '")
                 .append(track.getTrack().getUri())
                 .append("' --silent --format mp3 --outdir ")
