@@ -13,8 +13,10 @@ This plugin is able to download any song and playlist from Spotify. All download
 ## Setup
 To make this Spotify Input Plugin work, following steps have to be performed.
 
-1. Create initial app settings at [https://developer.spotify.com](https://developer.spotify.com)
-   1. Go to [https://developer.spotify.com](https://developer.spotify.com)
+1. Create initial app settings at [https://developer.spotify.com/dashboard/](https://developer.spotify.com/dashboard/)
+   1. Go to [https://developer.spotify.com/dashboard/](https://developer.spotify.com/dashboard/). 
+   2. Accept the service.
+   3. Create new app, to get  `clientId` & `clientSecret`,
    2. Define `redirectUri` - can be randomly chosen, must just be a valid URI 
    3. Copy `clientId` & `clientSecret`, can be put directly into `musicsync.json` see below
    4. Save same `redirectUri` to `musicsync.json`
