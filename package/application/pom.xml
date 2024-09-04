@@ -35,6 +35,12 @@
         </dependency>
         <dependency>
             <groupId>rocks.voss</groupId>
+            <artifactId>musicsync-plugins-filesystemin</artifactId>
+            <version>3.1</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>rocks.voss</groupId>
             <artifactId>musicsync-plugins-spotify</artifactId>
             <version>3.1</version>
             <type>jar</type>

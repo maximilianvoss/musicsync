@@ -70,8 +70,13 @@ public class Application {
         while (true) {
             try {
                 sync(config, connections);
-                log.debug("Taking a nap for: " + config.getGeneral().getTimeout() + " seconds.");
-                Thread.sleep(config.getGeneral().getTimeout() * 1000);
+                var timeout = config.getGeneral().getTimeout();
+                if (timeout <= 0) {
+                    log.info("Done");
+                    break;
+                }
+                log.info("Taking a nap for: " + timeout + " seconds.");
+                Thread.sleep(timeout * 1000);
                 log.debug("Up again");
             } catch (Exception e) {
                 log.error("Exception", e);
@@ -89,6 +94,7 @@ public class Application {
 
                 if (inputPlugin == null || outputPlugin == null) {
                     log.error("One is null\nInputPlugin: " + inputPlugin + ", outputPlugin: " + outputPlugin);
+                    continue;
                 }
 
                 inputPlugin.establishConnection();

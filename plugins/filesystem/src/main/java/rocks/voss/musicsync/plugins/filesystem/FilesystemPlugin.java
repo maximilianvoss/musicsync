@@ -133,9 +133,14 @@ public class FilesystemPlugin implements SyncOutputPlugin {
     }
 
     private String getFilename(SyncTrack syncTrack) {
-        String name = StringUtils.substring("00" + syncTrack.getTrackNumber(), 0, 3);
-        name = name + "-" + syncTrack.getArtists()[0] + "-" + syncTrack.getName();
-        return StringUtils.replace(name, " ", "_");
+        StringBuilder filename = new StringBuilder();
+        filename.append(StringUtils.leftPad(String.valueOf(syncTrack.getTrackNumber()), 3, "0"));
+        var artists = syncTrack.getArtists();
+        if (artists != null && artists.length > 0) {
+            filename.append("-").append(artists[0]);
+        }
+        filename.append("-").append(syncTrack.getName());
+        return StringUtils.replace(filename.toString(), " ", "_");
     }
 
     private String getOutputPath(SyncConnection connection) {

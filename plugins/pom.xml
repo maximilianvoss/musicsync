@@ -24,6 +24,7 @@
 
     <modules>
         <module>filesystem</module>
+        <module>filesystemin</module>
         <module>spotify</module>
         <module>toniebox</module>
     </modules>

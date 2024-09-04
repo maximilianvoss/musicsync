@@ -45,8 +45,6 @@ public class TonieboxPlugin implements SyncOutputPlugin {
     public void uploadTrack(SyncConnection connection, SyncTrack syncTrack) {
         try {
             CreativeTonie creativeTonie = getCreativeTonie(connection);
-            creativeTonie.refresh();
-
             if (creativeTonie == null) {
                 log.error("CreativeTonie not found");
                 return;
@@ -57,7 +55,9 @@ public class TonieboxPlugin implements SyncOutputPlugin {
                 return;
             }
             creativeTonie.refresh();
+            log.info("Uploading: " + syncTrack);
             creativeTonie.uploadFile(getTrackTitle(syncTrack), f.getAbsolutePath());
+            log.info("Committing tonie " + creativeTonie.getName());
             creativeTonie.commit();
 
         } catch (Exception e) {
@@ -95,25 +95,40 @@ public class TonieboxPlugin implements SyncOutputPlugin {
         }
 
         try {
-            List<Chapter> sortedChapters = new ArrayList<>(creativeTonie.getChapters().length);
-            log.debug("Put unknown tracks to front");
-            for (Chapter chapter : creativeTonie.getChapters()) {
-                if (!Pattern.matches("\\w{22}\\s-\\s.+\\s-\\s.+", chapter.getTitle())) {
-                    sortedChapters.add(chapter);
-                }
-            }
-            log.debug("Sorting known tracks");
-            for (SyncTrack syncTrack : syncTracks) {
-                Chapter chapter = findChapter(creativeTonie.getChapters(), syncTrack);
-                if (chapter != null) {
-                    sortedChapters.add(chapter);
-                }
-            }
+            List<Chapter> chapters = new ArrayList<>(creativeTonie.getChapters().length);
 
-            creativeTonie.setChapters(sortedChapters.toArray(new Chapter[]{}));
+            if (pluginConfiguration.getSortMode() >= 0) {
+                addKnown(syncTracks, creativeTonie, chapters);
+                addUnknown(creativeTonie, chapters);
+            } else if (pluginConfiguration.getSortMode() < 0) {
+                addUnknown(creativeTonie, chapters);
+                addKnown(syncTracks, creativeTonie, chapters);
+            }
+            log.info("Chapters after ordering: " + chapters.toString());
+            creativeTonie.setChapters(chapters.toArray(new Chapter[]{}));
+            log.info("Committing tonie " + creativeTonie.getName());
             creativeTonie.commit();
         } catch (Exception e) {
             log.error("Exception", e);
+        }
+    }
+
+    private void addKnown(List<SyncTrack> syncTracks, CreativeTonie creativeTonie, List<Chapter> chapters) {
+        log.debug("Adding known tracks");
+        for (SyncTrack syncTrack : syncTracks) {
+            Chapter chapter = findChapter(creativeTonie.getChapters(), syncTrack);
+            if (chapter != null) {
+                chapters.add(chapter);
+            }
+        }
+    }
+
+    private void addUnknown(CreativeTonie creativeTonie, List<Chapter> chapters) {
+        log.info("Adding unknown tracks");
+        for (Chapter chapter : creativeTonie.getChapters()) {
+            if (!Pattern.matches("\\w{22}\\s-\\s.+\\s-\\s.+", chapter.getTitle())) {
+                chapters.add(chapter);
+            }
         }
     }
 
@@ -135,7 +150,9 @@ public class TonieboxPlugin implements SyncOutputPlugin {
                 }
             }
 
+            log.info("Chapters after clean up: " + newChapters.toString());
             creativeTonie.setChapters(newChapters.toArray(new Chapter[]{}));
+            log.info("Committing tonie " + creativeTonie.getName());
             creativeTonie.commit();
         } catch (Exception e) {
             log.error("Exception", e);
@@ -217,7 +234,14 @@ public class TonieboxPlugin implements SyncOutputPlugin {
     }
 
     private String getTrackTitle(SyncTrack syncTrack) {
-        return StringUtils.left(syncTrack.getId() + " - " + syncTrack.getArtists()[0] + " - " + syncTrack.getName(), 128);
+        StringBuilder title = new StringBuilder();
+        title.append(syncTrack.getId());
+        var artists = syncTrack.getArtists();
+        if (artists != null && artists.length > 0) {
+            title.append(" - ").append(artists[0]);
+        }
+        title.append(" - ").append(syncTrack.getName());
+        return StringUtils.left(title.toString(), 128);
     }
 
     private boolean isChapterToBeRemoved(List<SyncTrack> syncTracks, Chapter chapter) {
@@ -228,14 +252,14 @@ public class TonieboxPlugin implements SyncOutputPlugin {
             if (StringUtils.equals(chapter.getTitle(), getTrackTitle(syncTrack))) {
                 log.debug("Chapter found: " + chapter.getTitle());
                 if (!isValidTrack(syncTrack, chapter)) {
-                    log.debug("discrepancy between source & target is too high: " + syncTrack.getId());
+                    log.info("discrepancy between source & target is too high: " + syncTrack.getId());
                     return true;
                 }
                 if (syncTrack.isFresh()) {
-                    log.debug("Track was updated and needs reupload: " + syncTrack.getId());
+                    log.info("Track was updated and needs reupload: " + syncTrack.getId());
                     return true;
                 }
-                log.debug("Chapter is not to be removed: " + syncTrack.getId());
+                log.info("Chapter is not to be removed: " + syncTrack.getId());
                 return false;
             }
         }
@@ -256,12 +280,12 @@ public class TonieboxPlugin implements SyncOutputPlugin {
         int chapterDuration = Math.round(chapter.getSeconds()) * 1000;
         int diff = chapterDuration - syncTrack.getTrackDuration();
 
-        log.debug("SyncTrack length: " + syncTrack.getTrackDuration());
-        log.debug("Chapter length: " + chapter.getSeconds() * 1000);
-        log.debug("Calc'd Diff: " + diff);
+        log.info(syncTrack + " length: " + syncTrack.getTrackDuration());
+        log.info(syncTrack + " chapter length: " + chapter.getSeconds() * 1000);
+        log.info(syncTrack + " calculated diff: " + diff);
 
         if (diff > pluginConfiguration.getThreshold() || diff < -pluginConfiguration.getThreshold()) {
-            log.debug("not valid");
+            log.info(syncTrack + " is not valid");
             return false;
         }
         log.debug("valid");

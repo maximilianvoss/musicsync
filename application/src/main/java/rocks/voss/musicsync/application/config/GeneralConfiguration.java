@@ -6,4 +6,5 @@ import lombok.Data;
 public class GeneralConfiguration {
     int timeout;
     boolean bulk = false;
+    int sortMode;
 }

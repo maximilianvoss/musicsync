@@ -7,4 +7,5 @@ public class PluginConfiguration {
     private String username;
     private String password;
     private int threshold = 2000;
+    private int sortMode = -1;
 }
